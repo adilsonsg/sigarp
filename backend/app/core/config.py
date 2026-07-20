@@ -1,14 +1,29 @@
 from functools import lru_cache
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
     app_name: str = "SIGARP"
-    app_version: str = "0.2.0"
-    database_url: str = "postgresql+psycopg2://sigarp:sigarp123@postgres:5432/sigarp"
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    app_version: str = "0.2.1"
+    app_env: Literal["development", "test", "production"] = "development"
+    log_level: str = "INFO"
+    database_url: str = (
+        "postgresql+psycopg2://sigarp:sigarp123@postgres:5432/sigarp"
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
 
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
 
 settings = get_settings()

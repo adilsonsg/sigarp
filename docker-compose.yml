@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16
     container_name: sigarp_postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: sigarp
       POSTGRES_USER: sigarp
@@ -20,15 +21,29 @@ services:
     build:
       context: ./backend
     container_name: sigarp_backend
+    restart: unless-stopped
     environment:
       APP_NAME: SIGARP
-      APP_VERSION: 0.2.0
+      APP_VERSION: 0.2.1
+      APP_ENV: development
+      LOG_LEVEL: INFO
       DATABASE_URL: postgresql+psycopg2://sigarp:sigarp123@postgres:5432/sigarp
     ports:
       - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

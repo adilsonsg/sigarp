@@ -1,11 +1,20 @@
-"""create organizations table"""
+"""create organizations table
+
+Revision ID: 20260720_0001
+Revises:
+Create Date: 2026-07-20
+"""
+
 from typing import Sequence, Union
-from alembic import op
+
 import sqlalchemy as sa
+from alembic import op
+
 revision: str = "20260720_0001"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
+
 
 def upgrade() -> None:
     op.create_table(
@@ -17,12 +26,18 @@ def upgrade() -> None:
         sa.Column("esfera", sa.String(length=20), nullable=False),
         sa.Column("uf", sa.String(length=2), nullable=True),
         sa.Column("municipio", sa.String(length=100), nullable=True),
-        sa.Column("criado_em", sa.DateTime(timezone=True), server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False),
+        sa.Column(
+            "criado_em",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("CURRENT_TIMESTAMP"),
+            nullable=False,
+        ),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("cnpj", name="uq_organizations_cnpj"),
     )
-    op.create_index("ix_organizations_nome", "organizations", ["nome"], unique=False)
-    op.create_index("ix_organizations_sigla", "organizations", ["sigla"], unique=False)
+    op.create_index("ix_organizations_nome", "organizations", ["nome"])
+    op.create_index("ix_organizations_sigla", "organizations", ["sigla"])
+
 
 def downgrade() -> None:
     op.drop_index("ix_organizations_sigla", table_name="organizations")
