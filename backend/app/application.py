@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.api.error_handlers import register_exception_handlers
 from app.api.routes.organizations import router as organizations_router
+from app.api.routes.pncp import router as pncp_router
 from app.api.routes.system import router as system_router
 from app.core.config import settings
 from app.core.logging import configure_logging
@@ -22,5 +23,6 @@ def create_app() -> FastAPI:
 
     application.include_router(system_router)
     application.include_router(organizations_router)
+    application.include_router(pncp_router)
 
     return application

@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "SIGARP"
-    app_version: str = "0.3.0-alpha1"
+    app_version: str = "0.3.0-alpha2"
     app_env: Literal["development", "test", "production"] = "development"
     log_level: str = "INFO"
     pncp_base_url: str = "https://pncp.gov.br/api/consulta"

@@ -2,6 +2,31 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.3.0-alpha2-fix1] - 2026-07-20
+
+### Corrigido
+
+- Centralização de timeout, retry, backoff, pool e logging em `BaseHttpClient`.
+- `PNCPClient` refatorado para reutilizar a infraestrutura HTTP comum.
+- Versão do `docker-compose.yml` e do `.env` alinhada com `0.3.0-alpha2`.
+- Testes unitários adicionados para o cliente HTTP reutilizável.
+
+## [0.3.0-alpha2] - 2026-07-20
+
+### Adicionado
+
+- Endpoint `POST /pncp/contratacoes/pesquisar`.
+- Schemas Pydantic para páginas e contratações do PNCP.
+- Parser tolerante a campos adicionais da fonte oficial.
+- Filtro textual local sem diferenciação de acentos.
+- Filtro local para registros de preços (`srp`).
+- Tratamento HTTP para timeout, limite de requisições e falhas remotas.
+- Testes do parser, serviço e endpoint REST.
+
+### Alterado
+
+- Versão da aplicação para `0.3.0-alpha2`.
+
 ## [0.3.0-alpha1] - 2026-07-20
 
 ### Adicionado

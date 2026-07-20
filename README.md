@@ -66,3 +66,14 @@ docker compose run --rm backend ruff check . --fix
 - `docs/database.md`
 - `docs/contributing.md`
 - `docs/adr/`
+
+## Consulta PNCP
+
+A Sprint 3A M2 disponibiliza a primeira consulta funcional em memória:
+
+```http
+POST /pncp/contratacoes/pesquisar
+```
+
+A documentação interativa está disponível em `http://127.0.0.1:8000/docs`.
+
