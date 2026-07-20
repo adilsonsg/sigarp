@@ -2,60 +2,47 @@
 
 Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
-## Objetivo
+## Versão atual
 
-Criar uma plataforma pública, neutra e auditável para localizar, analisar e comparar Atas de Registro de Preços com base em requisitos técnicos objetivos.
+`0.2.0` — persistência, Alembic e API de órgãos.
 
-## Tecnologias iniciais
-
-- Python 3.12
-- FastAPI
-- PostgreSQL 16
-- SQLAlchemy 2
-- Alembic
-- Docker Compose
-- Pytest
-- Ruff
-
-## Executar com Docker
+## Instalação da Sprint 2
 
 ```bash
-docker compose up --build
+docker compose down
+docker compose up -d --build
+docker compose exec backend alembic upgrade head
+docker compose run --rm backend pytest -v
 ```
 
-Depois acesse:
+## Acessos
 
-- API: http://localhost:8000
-- Documentação: http://localhost:8000/docs
-- Health check: http://localhost:8000/health
+- Swagger: http://127.0.0.1:8000/docs
+- Health: http://127.0.0.1:8000/health
 
-Resposta esperada:
+## Endpoints
+
+- `POST /orgaos`
+- `GET /orgaos`
+- `GET /orgaos/{id}`
+
+Exemplo de cadastro:
 
 ```json
 {
-  "application": "SIGARP",
-  "version": "0.1.0",
-  "status": "online"
+  "nome": "Instituto Federal de Mato Grosso",
+  "sigla": "IFMT",
+  "cnpj": "10784782000150",
+  "esfera": "federal",
+  "uf": "MT",
+  "municipio": "Cuiabá"
 }
 ```
 
-## Executar testes
+## Migrações
 
 ```bash
-docker compose run --rm backend pytest
-```
-
-## Estrutura
-
-```text
-backend/
-  app/
-    api/
-    core/
-    database/
-    models/
-    schemas/
-    services/
-  tests/
-docs/
+docker compose exec backend alembic current
+docker compose exec backend alembic upgrade head
+docker compose exec backend alembic downgrade -1
 ```

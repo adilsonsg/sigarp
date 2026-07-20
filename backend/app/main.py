@@ -1,16 +1,10 @@
 from fastapi import FastAPI
+from app.api.routes.organizations import router as organizations_router
+from app.core.config import settings
 
-app = FastAPI(
-    title="SIGARP API",
-    version="0.1.0",
-    description="Sistema Inteligente de Gestão e Análise de Registro de Preços",
-)
-
+app = FastAPI(title=f"{settings.app_name} API", version=settings.app_version, description="Sistema Inteligente de Gestão e Análise de Registro de Preços")
+app.include_router(organizations_router)
 
 @app.get("/health", tags=["Sistema"])
 def health() -> dict[str, str]:
-    return {
-        "application": "SIGARP",
-        "version": "0.1.0",
-        "status": "online",
-    }
+    return {"application": settings.app_name, "version": settings.app_version, "status": "online"}

@@ -21,6 +21,8 @@ services:
       context: ./backend
     container_name: sigarp_backend
     environment:
+      APP_NAME: SIGARP
+      APP_VERSION: 0.2.0
       DATABASE_URL: postgresql+psycopg2://sigarp:sigarp123@postgres:5432/sigarp
     ports:
       - "8000:8000"
