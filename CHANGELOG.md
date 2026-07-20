@@ -2,6 +2,23 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.3.0-alpha1] - 2026-07-20
+
+### Adicionado
+
+- Arquitetura base de coletores com contrato abstrato e registry.
+- Cliente HTTP assíncrono para a API oficial PNCP Consulta.
+- Retry com backoff exponencial para HTTP 429 e erros transitórios 5xx.
+- Tratamento específico de timeout, rate limit e respostas remotas.
+- Configuração PNCP por variáveis de ambiente.
+- Testes unitários do registry e do cliente PNCP.
+- Documentação da arquitetura de coletores.
+
+### Alterado
+
+- Versão da aplicação para `0.3.0-alpha1`.
+- Logging estruturado passa a registrar a tentativa do coletor.
+
 ## [0.2.1] - 2026-07-20
 
 ### Adicionado

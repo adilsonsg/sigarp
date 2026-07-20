@@ -14,9 +14,7 @@ def create_app() -> FastAPI:
     application = FastAPI(
         title=f"{settings.app_name} API",
         version=settings.app_version,
-        description=(
-            "Sistema Inteligente de Gestão e Análise de Registro de Preços"
-        ),
+        description=("Sistema Inteligente de Gestão e Análise de Registro de Preços"),
     )
 
     application.add_middleware(RequestContextMiddleware)

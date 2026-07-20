@@ -21,6 +21,7 @@ class JsonFormatter(logging.Formatter):
             "path",
             "status_code",
             "duration_ms",
+            "attempt",
         ):
             value = getattr(record, field, None)
             if value is not None:
