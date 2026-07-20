@@ -10,10 +10,10 @@ from app.collectors.pncp.service import PNCPSearchService
 class FakePNCPClient:
     def __init__(self, payload: dict[str, Any]) -> None:
         self.payload = payload
-        self.calls: list[tuple[str, dict[str, Any] | None]] = []
+        self.calls: list[dict[str, Any]] = []
 
-    async def get(self, endpoint: str, *, params: dict[str, Any] | None = None) -> Any:
-        self.calls.append((endpoint, params))
+    async def buscar_contratacoes_publicadas(self, **kwargs: Any) -> Any:
+        self.calls.append(kwargs)
         return self.payload
 
 
@@ -45,10 +45,10 @@ async def test_service_builds_official_params_and_filters_keyword() -> None:
 
     result = await service.search_contractings(request)
 
-    assert client.calls[0][1] == {
-        "dataInicial": "20260701",
-        "dataFinal": "20260720",
-        "codigoModalidadeContratacao": 6,
+    assert client.calls[0] == {
+        "data_inicial": date(2026, 7, 1),
+        "data_final": date(2026, 7, 20),
+        "codigo_modalidade_contratacao": 6,
         "pagina": 1,
         "uf": "MT",
     }

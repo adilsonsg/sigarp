@@ -23,7 +23,13 @@ class PNCPSearchService:
         owns_client = self._client is None
         client = self._client or PNCPClient()
         try:
-            payload = await client.get(CONTRACTING_BY_PUBLICATION, params=params)
+            payload = await client.buscar_contratacoes_publicadas(
+                data_inicial=request.data_inicial,
+                data_final=request.data_final,
+                codigo_modalidade_contratacao=(request.codigo_modalidade_contratacao),
+                pagina=request.pagina,
+                uf=request.uf,
+            )
         finally:
             if owns_client:
                 await client.close()

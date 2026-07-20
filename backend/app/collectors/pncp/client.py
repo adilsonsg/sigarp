@@ -1,10 +1,12 @@
 from collections.abc import Mapping
+from datetime import date
 from typing import Any
 
 import httpx
 
 from app.clients.base import BaseHttpClient, SleepCallable
 from app.collectors.pncp.config import PNCPConfig
+from app.collectors.pncp.endpoints import CONTRACTING_BY_PUBLICATION
 
 
 class PNCPClient(BaseHttpClient):
@@ -37,4 +39,26 @@ class PNCPClient(BaseHttpClient):
         *,
         params: Mapping[str, Any] | None = None,
     ) -> Any:
+        """Perform a raw GET request against a PNCP endpoint."""
         return await self.get_json(endpoint, params=params)
+
+    async def buscar_contratacoes_publicadas(
+        self,
+        *,
+        data_inicial: date,
+        data_final: date,
+        codigo_modalidade_contratacao: int,
+        pagina: int = 1,
+        uf: str | None = None,
+    ) -> Any:
+        """Fetch contracting notices by publication date from PNCP."""
+        params: dict[str, str | int] = {
+            "dataInicial": data_inicial.strftime("%Y%m%d"),
+            "dataFinal": data_final.strftime("%Y%m%d"),
+            "codigoModalidadeContratacao": codigo_modalidade_contratacao,
+            "pagina": pagina,
+        }
+        if uf:
+            params["uf"] = uf.strip().upper()
+
+        return await self.get(CONTRACTING_BY_PUBLICATION, params=params)

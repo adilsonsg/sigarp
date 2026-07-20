@@ -1,4 +1,5 @@
 from collections.abc import Awaitable, Callable
+from datetime import date
 
 import httpx
 import pytest
@@ -111,3 +112,39 @@ async def test_client_rejects_invalid_json(config: PNCPConfig) -> None:
         client = PNCPClient(config, client=http_client)
         with pytest.raises(RemoteAPIError):
             await client.get("/v1/atas")
+
+
+@pytest.mark.asyncio
+async def test_client_builds_contracting_publication_query(
+    config: PNCPConfig,
+) -> None:
+    captured_request: httpx.Request | None = None
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal captured_request
+        captured_request = request
+        return httpx.Response(200, json={"data": []}, request=request)
+
+    transport = httpx.MockTransport(handler)
+    async with httpx.AsyncClient(
+        base_url=config.base_url, transport=transport
+    ) as http_client:
+        client = PNCPClient(config, client=http_client)
+        result = await client.buscar_contratacoes_publicadas(
+            data_inicial=date(2026, 7, 1),
+            data_final=date(2026, 7, 20),
+            codigo_modalidade_contratacao=6,
+            pagina=2,
+            uf="mt",
+        )
+
+    assert result == {"data": []}
+    assert captured_request is not None
+    assert captured_request.url.path == "/v1/contratacoes/publicacao"
+    assert dict(captured_request.url.params) == {
+        "dataInicial": "20260701",
+        "dataFinal": "20260720",
+        "codigoModalidadeContratacao": "6",
+        "pagina": "2",
+        "uf": "MT",
+    }

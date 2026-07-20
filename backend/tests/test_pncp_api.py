@@ -54,3 +54,40 @@ def test_pncp_search_validates_date_range(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
+
+
+def test_pncp_get_search_endpoint(client: TestClient) -> None:
+    app.dependency_overrides[get_pncp_search_service] = lambda: FakeService()
+    try:
+        response = client.get(
+            "/pncp/search",
+            params={
+                "termo": "projetor",
+                "data_inicial": "2026-07-01",
+                "data_final": "2026-07-20",
+                "codigo_modalidade_contratacao": 6,
+                "uf": "mt",
+                "pagina": 1,
+                "somente_srp": True,
+            },
+        )
+    finally:
+        app.dependency_overrides.pop(get_pncp_search_service, None)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["total_itens_retornados"] == 1
+    assert body["itens"][0]["objeto_compra"] == "Projetor interativo"
+
+
+def test_pncp_get_search_validates_date_range(client: TestClient) -> None:
+    response = client.get(
+        "/pncp/search",
+        params={
+            "data_inicial": "2026-07-20",
+            "data_final": "2026-07-01",
+            "codigo_modalidade_contratacao": 6,
+        },
+    )
+
+    assert response.status_code == 422

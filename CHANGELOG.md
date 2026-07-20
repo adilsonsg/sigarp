@@ -70,3 +70,22 @@ Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 - SQLAlchemy 2.
 - Alembic.
 - PostgreSQL.
+
+## 0.4.0-alpha1 - 2026-07-20
+
+- Adiciona o método tipado `PNCPClient.buscar_contratacoes_publicadas`.
+- Refatora `PNCPSearchService` para usar a interface de domínio do cliente PNCP.
+- Adiciona `GET /pncp/search` com filtros por termo, período, modalidade, UF, página e SRP.
+- Mantém compatibilidade com `POST /pncp/contratacoes/pesquisar`.
+- Amplia os testes do cliente, serviço e API PNCP.
+
+## [0.4.0-alpha3] - 2026-07-20
+
+### Adicionado
+- sincronização paginada de contratações publicadas no PNCP;
+- persistência local em `pncp_contractings` com UPSERT;
+- filtro padrão para contratações SRP;
+- estatísticas de leitura, inserção, atualização, descarte e erro;
+- comando `python -m app.cli.sync_pncp`;
+- migração Alembic `20260720_0003`;
+- testes de paginação e idempotência da sincronização.
