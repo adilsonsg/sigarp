@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import random
 from collections.abc import Awaitable, Callable, Mapping
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
 from time import perf_counter
 from typing import Any
 
@@ -123,7 +126,17 @@ class BaseHttpClient:
 
             if response.status_code in self.retryable_status_codes:
                 if attempt < attempts:
-                    await self._sleep(self._backoff(attempt))
+                    delay = self._retry_delay(response, attempt)
+                    logger.warning(
+                        "external_api_retry",
+                        extra={
+                            "service": self.service_name,
+                            "status_code": response.status_code,
+                            "attempt": attempt,
+                            "delay_seconds": round(delay, 2),
+                        },
+                    )
+                    await self._sleep(delay)
                     continue
                 if response.status_code == 429:
                     raise RemoteAPIRateLimitError(
@@ -150,6 +163,33 @@ class BaseHttpClient:
 
     def _backoff(self, attempt: int) -> float:
         return self.backoff_seconds * (2 ** (attempt - 1))
+
+    def _retry_delay(self, response: httpx.Response, attempt: int) -> float:
+        retry_after = self._parse_retry_after(response.headers.get("Retry-After"))
+        if retry_after is not None:
+            return max(retry_after, 1.0)
+
+        base_delay = self._backoff(attempt)
+        jitter = random.uniform(0, min(base_delay * 0.25, 5.0))
+        return base_delay + jitter
+
+    @staticmethod
+    def _parse_retry_after(value: str | None) -> float | None:
+        if not value:
+            return None
+
+        try:
+            return max(float(value), 0.0)
+        except ValueError:
+            pass
+
+        try:
+            retry_at = parsedate_to_datetime(value)
+            if retry_at.tzinfo is None:
+                retry_at = retry_at.replace(tzinfo=UTC)
+            return max((retry_at - datetime.now(UTC)).total_seconds(), 0.0)
+        except (TypeError, ValueError, OverflowError):
+            return None
 
     def _log_request(
         self,

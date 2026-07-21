@@ -51,7 +51,9 @@ class FakePNCPClient:
 @pytest.mark.asyncio
 async def test_sync_paginates_and_inserts(db_session: Session) -> None:
     client = FakePNCPClient()
-    stats = await PNCPSyncService(db_session, client=client).synchronize(
+    stats = await PNCPSyncService(
+        db_session, client=client, page_delay_seconds=0
+    ).synchronize(
         data_inicial=date(2026, 7, 1),
         data_final=date(2026, 7, 20),
         codigo_modalidade_contratacao=6,
@@ -69,7 +71,7 @@ async def test_sync_paginates_and_inserts(db_session: Session) -> None:
 @pytest.mark.asyncio
 async def test_sync_updates_existing_record(db_session: Session) -> None:
     client = FakePNCPClient()
-    service = PNCPSyncService(db_session, client=client)
+    service = PNCPSyncService(db_session, client=client, page_delay_seconds=0)
     kwargs = {
         "data_inicial": date(2026, 7, 1),
         "data_final": date(2026, 7, 20),

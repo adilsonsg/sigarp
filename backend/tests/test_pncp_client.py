@@ -69,7 +69,9 @@ async def test_client_retries_with_exponential_backoff(config: PNCPConfig) -> No
 
     assert result == {"ok": True}
     assert calls == 3
-    assert delays == [0.01, 0.02]
+    assert len(delays) == 2
+    assert 0.01 <= delays[0] <= 0.0125
+    assert 0.02 <= delays[1] <= 0.025
 
 
 @pytest.mark.asyncio

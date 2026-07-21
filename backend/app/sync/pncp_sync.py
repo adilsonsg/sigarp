@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from datetime import date
 from decimal import Decimal
@@ -18,10 +19,12 @@ class PNCPSyncService:
         self,
         db: Session,
         client: PNCPClient | None = None,
+        page_delay_seconds: float = 2.0,
     ) -> None:
         self.db = db
         self.repository = PNCPContractingRepository(db)
         self._client = client
+        self.page_delay_seconds = max(page_delay_seconds, 0.0)
 
     async def synchronize(
         self,
@@ -84,6 +87,8 @@ class PNCPSyncService:
                     and stats.paginas_processadas >= limite_paginas
                 ):
                     break
+                if self.page_delay_seconds > 0:
+                    await asyncio.sleep(self.page_delay_seconds)
                 pagina += 1
         finally:
             if owns_client:
