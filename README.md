@@ -4,7 +4,8 @@ Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
 
-`0.2.1` — Sprint 2.1: consolidação da arquitetura, qualidade, logging e CI.
+`0.5.0-alpha6` — busca PNCP, análise documental e avaliação por perfil técnico
+objetivo, neutro e versionado.
 
 ## Tecnologias
 
@@ -57,23 +58,28 @@ docker compose run --rm backend ruff check . --fix
 - `POST /orgaos`
 - `GET /orgaos`
 - `GET /orgaos/{id}`
+- `POST /pncp/contratacoes/pesquisar`
+- `GET /pncp/search`
+- `GET /pncp/oportunidades`
+
+## Avaliação técnica neutra
+
+O perfil corrente está em
+`backend/app/profiles/projectors_v1.json`. Ele contém somente requisitos técnicos
+objetivos e sua versão é persistida com cada avaliação. Marcas, fabricantes e
+famílias comerciais não participam da pontuação ou da classificação.
+
+Uma alteração de critérios exige um novo arquivo e uma nova versão SemVer do
+perfil; avaliações anteriores permanecem consultáveis por `perfil_versao`.
 
 ## Documentação
 
-- `INSTALAR_SPRINT_2_1.md`
-- `CHECKLIST_SPRINT_2_1.md`
+- `INSTALAR_V0.5.0_ALPHA6.md`
+- `VALIDACAO_V0.5.0_ALPHA6.md`
 - `docs/architecture.md`
 - `docs/database.md`
 - `docs/contributing.md`
 - `docs/adr/`
-
-## Consulta PNCP
-
-A Sprint 3A M2 disponibiliza a primeira consulta funcional em memória:
-
-```http
-POST /pncp/contratacoes/pesquisar
-```
+- `docs/backlog/ETAPA_0_ISSUES.md`
 
 A documentação interativa está disponível em `http://127.0.0.1:8000/docs`.
-

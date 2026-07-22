@@ -2,7 +2,9 @@
 
 ## Endpoint do SIGARP
 
-`POST /pncp/contratacoes/pesquisar`
+- `POST /pncp/contratacoes/pesquisar`: compatibilidade com a busca inicial;
+- `GET /pncp/search`: busca com parâmetros de consulta;
+- `GET /pncp/oportunidades`: oportunidades classificadas e avaliadas.
 
 O serviço consulta o recurso público do PNCP para contratações por data de publicação:
 
@@ -22,6 +24,34 @@ A API oficial não recebe a palavra-chave usada pelo SIGARP neste fluxo. Por iss
 
 O filtro `somente_srp` também é aplicado localmente.
 
-## Limitação desta entrega
+## Índice local
 
-A Sprint 3A M2 consulta apenas uma página por requisição e não grava dados. Paginação automatizada e persistência ficam para as próximas entregas.
+Os comandos de sincronização percorrem páginas, normalizam contratações e fazem
+UPSERT pelo número de controle PNCP. Itens e documentos usam identificadores
+próprios da fonte e podem ser sincronizados de forma idempotente.
+
+```bash
+python -m app.cli.sync_pncp
+python -m app.cli.sync_pncp_items
+python -m app.cli.sync_pncp_documents
+python -m app.cli.analyze_pncp_documents
+python -m app.cli.classify_pncp_opportunities
+```
+
+## Oportunidades
+
+A classificação primeiro confirma o contexto de projetor em objeto, item ou
+documento e descarta falsos positivos conhecidos. A avaliação técnica posterior
+usa o perfil objetivo `projetores`, informa `perfil_versao` e mantém evidências
+por requisito.
+
+Por padrão, `GET /pncp/oportunidades` retorna a versão corrente do perfil. O
+parâmetro `perfil_versao` permite consultar resultados históricos.
+
+## Limitações conhecidas
+
+- busca em memória continua disponível por compatibilidade e filtra somente a
+  página recebida da fonte;
+- extração documental cobre texto, PDF e ZIP, mas documentos sem texto exigem
+  análise humana ou OCR futuro;
+- a classificação automática é apoio à triagem, não decisão de contratação.

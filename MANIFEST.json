@@ -1,7 +1,10 @@
 {
   "project": "SIGARP",
-  "version": "0.2.1",
-  "sprint": "2.1",
-  "file_count": 65,
-  "python_compile_validation": true
+  "version": "0.5.0-alpha6",
+  "stage": "Etapa 0 - convergencia e neutralidade",
+  "file_count": 162,
+  "test_count": 59,
+  "migration_head": "20260722_0008",
+  "python_compile_validation": true,
+  "quality_checks": ["ruff", "black", "isort", "pytest"]
 }

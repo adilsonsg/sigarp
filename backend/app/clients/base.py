@@ -90,13 +90,19 @@ class BaseHttpClient:
         endpoint: str,
         *,
         params: Mapping[str, Any] | None = None,
+        headers: Mapping[str, str] | None = None,
     ) -> httpx.Response:
         attempts = self.max_retries + 1
 
         for attempt in range(1, attempts + 1):
             started_at = perf_counter()
             try:
-                response = await self._client.request(method, endpoint, params=params)
+                response = await self._client.request(
+                    method,
+                    endpoint,
+                    params=params,
+                    headers=headers,
+                )
             except httpx.TimeoutException as exc:
                 self._log_request(
                     method=method,

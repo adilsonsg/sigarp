@@ -62,3 +62,79 @@ class PNCPClient(BaseHttpClient):
             params["uf"] = uf.strip().upper()
 
         return await self.get(CONTRACTING_BY_PUBLICATION, params=params)
+
+    async def buscar_itens_contratacao(
+        self,
+        *,
+        cnpj: str,
+        ano: int,
+        sequencial: int,
+        pagina: int = 1,
+        tamanho_pagina: int = 100,
+    ) -> Any:
+        """Fetch all items from the PNCP Integration API.
+
+        Pagination arguments remain in the signature for backward compatibility.
+        The integration endpoint returns the complete JSON list.
+        """
+        del pagina, tamanho_pagina
+        cnpj_normalizado = "".join(
+            character for character in str(cnpj) if character.isdigit()
+        )
+        endpoint = (
+            "https://pncp.gov.br/api/pncp/v1/orgaos/"
+            f"{cnpj_normalizado}/compras/{ano}/{sequencial}/itens"
+        )
+        payload = await self.get(endpoint)
+
+        if isinstance(payload, list):
+            items = payload
+        elif isinstance(payload, dict):
+            items = (
+                payload.get("data")
+                or payload.get("itens")
+                or payload.get("content")
+                or []
+            )
+        else:
+            items = []
+
+        return {
+            "data": items,
+            "itens": items,
+            "content": items,
+            "totalPaginas": 1,
+            "numeroPagina": 1,
+            "pagina": 1,
+            "totalElementos": len(items),
+        }
+
+    async def buscar_documentos_contratacao(
+        self,
+        *,
+        cnpj: str,
+        ano: int,
+        sequencial: int,
+    ) -> Any:
+        """Fetch contracting document metadata from the Integration API."""
+        cnpj_normalizado = "".join(
+            character for character in str(cnpj) if character.isdigit()
+        )
+        endpoint = (
+            "https://pncp.gov.br/api/pncp/v1/orgaos/"
+            f"{cnpj_normalizado}/compras/{ano}/{sequencial}/arquivos"
+        )
+        return await self.get(endpoint)
+
+    async def baixar_documento(self, url: str) -> httpx.Response:
+        """Download raw contracting document content with centralized retries."""
+        return await self.request(
+            "GET",
+            url,
+            headers={
+                "Accept": (
+                    "application/pdf, application/zip, "
+                    "application/octet-stream, text/plain, */*"
+                )
+            },
+        )

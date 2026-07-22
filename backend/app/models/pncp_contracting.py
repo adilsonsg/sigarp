@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import JSON, Boolean, DateTime, Integer, Numeric, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -41,6 +41,10 @@ class PNCPContractingRecord(Base):
     municipio: Mapped[str | None] = mapped_column(String(100), nullable=True)
     link_sistema_origem: Mapped[str | None] = mapped_column(String(500), nullable=True)
     dados_fonte: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    documentos_sincronizados_em: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, index=True
+    )
+    documentos_quantidade: Mapped[int | None] = mapped_column(Integer, nullable=True)
     criado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -49,4 +53,22 @@ class PNCPContractingRecord(Base):
         server_default=func.now(),
         onupdate=func.now(),
         nullable=False,
+    )
+    items = relationship(
+        "PNCPContractingItemRecord",
+        back_populates="contracting",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    documents = relationship(
+        "PNCPContractingDocumentRecord",
+        back_populates="contracting",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+    opportunity_assessments = relationship(
+        "PNCPOpportunityAssessmentRecord",
+        back_populates="contracting",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

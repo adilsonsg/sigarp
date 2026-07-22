@@ -1,3 +1,6 @@
+# Keep these tool settings aligned with ../pyproject.toml. This copy is required
+# because the backend Docker image uses backend/ as its isolated build context.
+
 [tool.black]
 line-length = 88
 target-version = ["py312"]
@@ -11,7 +14,7 @@ known_third_party = ["alembic"]
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-src = ["backend/app", "backend/tests"]
+src = ["app", "tests"]
 
 [tool.ruff.lint]
 select = [
@@ -28,8 +31,3 @@ ignore = ["B008"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
-
-[tool.pytest.ini_options]
-pythonpath = ["backend"]
-testpaths = ["backend/tests"]
-addopts = "-q --disable-warnings --strict-markers"

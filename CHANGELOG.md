@@ -2,6 +2,33 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.5.0-alpha6] - 2026-07-22
+
+### Adicionado
+
+- Perfil objetivo de projetores em arquivo JSON externo, validado e versionado.
+- Persistência de `perfil_versao` para manter o histórico das avaliações.
+- Migração Alembic `20260722_0008` com identificação explícita das avaliações
+  legadas da alpha5.
+- Teste de regressão que assegura resultado idêntico para fabricantes distintos
+  quando as especificações técnicas são equivalentes.
+
+### Alterado
+
+- Avaliação técnica passa a considerar somente requisitos objetivos habilitados
+  no perfil.
+- Consulta de oportunidades seleciona, por padrão, a versão corrente do perfil.
+- API de oportunidades informa e permite filtrar `perfil_versao`.
+- Contêiner do backend respeita comandos informados ao `docker compose run`,
+  permitindo executar testes, lint e tarefas administrativas.
+- Imagem do backend inclui a configuração de Black, isort e Ruff compatível com
+  seu contexto de build isolado.
+
+### Removido
+
+- Preferência, observação e campo de avaliação associados a marca ou família
+  comercial específica.
+
 ## [0.3.0-alpha2-fix1] - 2026-07-20
 
 ### Corrigido

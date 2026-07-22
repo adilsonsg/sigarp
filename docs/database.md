@@ -22,17 +22,29 @@ docker compose exec backend alembic downgrade -1
 
 ## Entidades atuais
 
-### organizations
+| Tabela | Responsabilidade |
+|---|---|
+| `organizations` | órgãos públicos cadastrados |
+| `suppliers` | fornecedores presentes em registros importados |
+| `price_registry_records` | atas e registros de preços |
+| `price_registry_items` | itens vinculados aos registros de preços |
+| `pncp_contractings` | contratações normalizadas e payload oficial preservado |
+| `pncp_contracting_items` | itens oficiais de cada contratação |
+| `pncp_contracting_documents` | metadados, hash e texto extraído dos documentos |
+| `pncp_opportunity_assessments` | classificação, evidências e adequação técnica |
 
-Representa órgãos públicos cadastrados no SIGARP.
+## Integridade das avaliações
 
-Campos principais:
+Uma contratação pode possuir uma avaliação por combinação de `perfil` e
+`perfil_versao`. A restrição
+`uq_pncp_opportunity_contracting_profile_version` impede duplicidade sem apagar o
+histórico de versões anteriores.
 
-- `id`
-- `nome`
-- `sigla`
-- `cnpj`
-- `esfera`
-- `uf`
-- `municipio`
-- `criado_em`
+Avaliações originadas antes da alpha6 são identificadas como `legacy-alpha5`.
+Novos processamentos de projetores usam o perfil `1.0.0`.
+
+## Migração corrente
+
+O head esperado é `20260722_0008`. O downgrade para 0007 consolida múltiplas
+versões em um registro por contratação e perfil; portanto, não deve ser executado
+em produção sem cópia de segurança e plano de reversão.

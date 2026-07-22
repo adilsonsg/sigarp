@@ -1,0 +1,11 @@
+{
+  "slug": "projetores",
+  "nome": "PROJETORES_INTERATIVOS_SALA_AULA",
+  "versao": "1.0.0",
+  "quantidade_minima": 20,
+  "exigir_laser": true,
+  "exigir_full_hd_nativo": true,
+  "exigir_wifi": true,
+  "exigir_interatividade": true,
+  "exigir_curta_ou_ultracurta_distancia": true
+}
