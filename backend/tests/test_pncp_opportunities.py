@@ -1,8 +1,18 @@
+from datetime import UTC, datetime
+
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.pncp_contracting import PNCPContractingRecord
 from app.models.pncp_contracting_document import PNCPContractingDocumentRecord
 from app.models.pncp_contracting_item import PNCPContractingItemRecord
+from app.models.pncp_opportunity_assessment import (
+    PNCPOpportunityAssessmentRecord,
+)
+from app.models.pncp_processing_run import (
+    PNCPOpportunityAssessmentHistoryRecord,
+    PNCPProcessingRunRecord,
+)
 from app.services.pncp_opportunity_service import PNCPOpportunityService
 
 
@@ -67,6 +77,8 @@ def test_classify_all_persists_assessment(db_session: Session) -> None:
     stats = PNCPOpportunityService(db_session).classify_all()
 
     assert stats.processadas == 1
+    assert stats.execucao_id is not None
+    assert stats.status_execucao == "CONCLUIDA"
     assert stats.candidatas_documento == 1
     opportunities = PNCPOpportunityService(db_session).list_opportunities()
     assert len(opportunities) == 1
@@ -82,6 +94,12 @@ def test_classifies_extracted_document_as_confirmed() -> None:
             sequencial_documento=1,
             titulo="Edital",
             extracao_status="SUCESSO",
+            extrator_versao="1.0.0",
+            conteudo_sha256="a" * 64,
+            data_publicacao_pncp=datetime(2026, 7, 20, tzinfo=UTC),
+            conteudo_analisado_em=datetime(2026, 7, 22, tzinfo=UTC),
+            criado_em=datetime(2026, 7, 21, tzinfo=UTC),
+            url="https://pncp.test/edital.pdf",
             texto_extraido=(
                 "Projetor multimídia laser Full HD, Wi-Fi, interativo, "
                 "ultracurta distância."
@@ -93,6 +111,23 @@ def test_classifies_extracted_document_as_confirmed() -> None:
     assert result.pontuacao >= 85
     assert "projetor" in result.termos_encontrados
     assert "ultracurta distancia" in result.evidencias["especificacoes_documentos"]
+    document_evidence = result.evidencias["documentos"][0]
+    assert document_evidence["conteudo_sha256"] == "a" * 64
+    assert document_evidence["extrator_versao"] == "1.0.0"
+    assert document_evidence["coletado_em"] == "2026-07-21T00:00:00+00:00"
+    assert document_evidence["data_publicacao_pncp"] == "2026-07-20T00:00:00+00:00"
+    assert document_evidence["conteudo_analisado_em"] == "2026-07-22T00:00:00+00:00"
+    assert result.evidencias["fonte"]["numero_controle_pncp"] == (
+        "00000000000000-1-000001/2026"
+    )
+    requirement_trace = result.evidencias["rastreabilidade_requisitos"]
+    assert requirement_trace
+    assert {item["resultado"] for item in requirement_trace} <= {
+        "ATENDIDO",
+        "NAO_ATENDIDO",
+        "NAO_COMPROVADO",
+    }
+    assert all(item["trechos"] for item in requirement_trace)
 
 
 def test_document_profile_is_context_aware() -> None:
@@ -123,11 +158,7 @@ def test_document_profile_is_context_aware() -> None:
 
 
 def test_repository_refreshes_classified_timestamp(db_session: Session) -> None:
-    from datetime import UTC, datetime, timedelta
-
-    from app.models.pncp_opportunity_assessment import (
-        PNCPOpportunityAssessmentRecord,
-    )
+    from datetime import timedelta
 
     record = contracting("Aquisição de projetor")
     record.id = None
@@ -154,13 +185,50 @@ def test_repository_refreshes_classified_timestamp(db_session: Session) -> None:
     assert refreshed > old
 
 
+def test_reprocessing_keeps_immutable_assessment_history(
+    db_session: Session,
+) -> None:
+    record = contracting("Aquisição de projetor interativo")
+    record.id = None
+    db_session.add(record)
+    db_session.commit()
+
+    service = PNCPOpportunityService(db_session)
+    first = service.classify_all()
+    second = service.classify_all()
+
+    assessments = db_session.scalar(
+        select(func.count()).select_from(PNCPOpportunityAssessmentRecord)
+    )
+    histories = list(
+        db_session.scalars(
+            select(PNCPOpportunityAssessmentHistoryRecord).order_by(
+                PNCPOpportunityAssessmentHistoryRecord.id
+            )
+        )
+    )
+    runs = list(db_session.scalars(select(PNCPProcessingRunRecord)))
+    assessment = db_session.scalar(select(PNCPOpportunityAssessmentRecord))
+
+    assert assessments == 1
+    assert len(histories) == 2
+    assert len(runs) == 2
+    assert first.execucao_id != second.execucao_id
+    assert {history.execucao_id for history in histories} == {
+        first.execucao_id,
+        second.execucao_id,
+    }
+    assert all(
+        history.snapshot["analisador_versao"] == "1.0.0" for history in histories
+    )
+    assert assessment is not None
+    assert assessment.ultima_execucao_id == second.execucao_id
+    assert assessment.analisador_versao == "1.0.0"
+
+
 def test_filters_opportunities_by_profile_suitability(
     db_session: Session,
 ) -> None:
-    from app.models.pncp_opportunity_assessment import (
-        PNCPOpportunityAssessmentRecord,
-    )
-
     record = contracting("Aquisição de projetor")
     record.id = None
     db_session.add(record)
@@ -190,10 +258,6 @@ def test_filters_opportunities_by_profile_suitability(
 def test_keeps_assessment_history_by_profile_version(
     db_session: Session,
 ) -> None:
-    from app.models.pncp_opportunity_assessment import (
-        PNCPOpportunityAssessmentRecord,
-    )
-
     record = contracting("Aquisição de projetor")
     record.id = None
     db_session.add(record)

@@ -30,8 +30,10 @@ docker compose exec backend alembic downgrade -1
 | `price_registry_items` | itens vinculados aos registros de preços |
 | `pncp_contractings` | contratações normalizadas e payload oficial preservado |
 | `pncp_contracting_items` | itens oficiais de cada contratação |
-| `pncp_contracting_documents` | metadados, hash e texto extraído dos documentos |
+| `pncp_contracting_documents` | metadados, hash, versão do extrator e texto extraído |
 | `pncp_opportunity_assessments` | classificação, evidências e adequação técnica |
+| `pncp_processing_runs` | execução, parâmetros, versões, status e estatísticas |
+| `pncp_opportunity_assessment_history` | snapshot imutável de cada avaliação executada |
 
 ## Integridade das avaliações
 
@@ -41,10 +43,18 @@ Uma contratação pode possuir uma avaliação por combinação de `perfil` e
 histórico de versões anteriores.
 
 Avaliações originadas antes da alpha6 são identificadas como `legacy-alpha5`.
-Novos processamentos de projetores usam o perfil `1.0.0`.
+Novos processamentos de projetores usam o perfil `1.0.0`. A avaliação corrente
+registra também `analisador_versao` e `ultima_execucao_id`.
+
+Documentos analisados registram `extrator_versao`. Na migração, conteúdo legado
+já processado recebe `legacy-unknown`; uma nova extração registra a versão atual.
+
+Cada reprocessamento cria uma linha em `pncp_processing_runs` e um snapshot por
+contratação em `pncp_opportunity_assessment_history`. A tabela corrente continua
+com uma linha por contratação, perfil e versão.
 
 ## Migração corrente
 
-O head esperado é `20260722_0008`. O downgrade para 0007 consolida múltiplas
+O head esperado é `20260722_0009`. O downgrade para 0007 consolida múltiplas
 versões em um registro por contratação e perfil; portanto, não deve ser executado
 em produção sem cópia de segurança e plano de reversão.

@@ -4,8 +4,8 @@ Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
 
-`0.5.0-alpha6` — busca PNCP, análise documental e avaliação por perfil técnico
-objetivo, neutro e versionado.
+`0.6.0-alpha1` — busca PNCP, avaliação técnica neutra e trilha de auditoria por
+execução e reprocessamento.
 
 ## Tecnologias
 
@@ -61,6 +61,8 @@ docker compose run --rm backend ruff check . --fix
 - `POST /pncp/contratacoes/pesquisar`
 - `GET /pncp/search`
 - `GET /pncp/oportunidades`
+- `GET /pncp/oportunidades/execucoes`
+- `GET /pncp/oportunidades/{assessment_id}/historico`
 
 ## Avaliação técnica neutra
 
@@ -72,10 +74,14 @@ famílias comerciais não participam da pontuação ou da classificação.
 Uma alteração de critérios exige um novo arquivo e uma nova versão SemVer do
 perfil; avaliações anteriores permanecem consultáveis por `perfil_versao`.
 
+Cada classificação em lote cria uma execução identificável. O estado corrente
+permanece otimizado para consulta, enquanto snapshots imutáveis preservam o
+resultado de cada reprocessamento e a versão do analisador utilizada.
+
 ## Documentação
 
-- `INSTALAR_V0.5.0_ALPHA6.md`
-- `VALIDACAO_V0.5.0_ALPHA6.md`
+- `INSTALAR_V0.6.0_ALPHA1.md`
+- `VALIDACAO_V0.6.0_ALPHA1.md`
 - `docs/architecture.md`
 - `docs/database.md`
 - `docs/contributing.md`

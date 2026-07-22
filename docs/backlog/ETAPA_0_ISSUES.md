@@ -46,7 +46,7 @@ pontuação e classificação técnica.
 
 - Labels sugeridos: `P0`, `audit`, `data`
 - Dependências: P0-02
-- Estado: pendente
+- Estado: implementado tecnicamente na `0.6.0-alpha1`; aguarda validação PostgreSQL
 
 ### Objetivo
 

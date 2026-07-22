@@ -6,14 +6,14 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     app_name: str = "SIGARP"
-    app_version: str = "0.5.0-alpha6"
+    app_version: str = "0.6.0-alpha1"
     app_env: Literal["development", "test", "production"] = "development"
     log_level: str = "INFO"
     pncp_base_url: str = "https://pncp.gov.br/api/consulta"
     pncp_timeout_seconds: float = 30.0
     pncp_max_retries: int = 7
     pncp_backoff_seconds: float = 5.0
-    pncp_user_agent: str = "SIGARP/0.5.0-alpha6 (IFMT)"
+    pncp_user_agent: str = "SIGARP/0.6.0-alpha1 (IFMT)"
     pncp_document_max_bytes: int = 50_000_000
     pncp_document_max_text_chars: int = 2_000_000
     pncp_document_max_pages: int = 1000

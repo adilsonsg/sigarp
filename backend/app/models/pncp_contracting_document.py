@@ -54,6 +54,9 @@ class PNCPContractingDocumentRecord(Base):
     extracao_status: Mapped[str | None] = mapped_column(
         String(50), nullable=True, index=True
     )
+    extrator_versao: Mapped[str | None] = mapped_column(
+        String(30), nullable=True, index=True
+    )
     extracao_erro: Mapped[str | None] = mapped_column(Text, nullable=True)
     conteudo_analisado_em: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True, index=True

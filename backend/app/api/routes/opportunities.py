@@ -4,10 +4,33 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db
-from app.schemas.pncp_opportunities import PNCPOpportunityResponse
+from app.schemas.pncp_opportunities import (
+    PNCPOpportunityHistoryResponse,
+    PNCPOpportunityResponse,
+    PNCPProcessingRunResponse,
+)
 from app.services.pncp_opportunity_service import PNCPOpportunityService
 
 router = APIRouter(prefix="/pncp/oportunidades", tags=["Oportunidades PNCP"])
+
+
+@router.get("/execucoes", response_model=list[PNCPProcessingRunResponse])
+def list_processing_runs(
+    db: Annotated[Session, Depends(get_db)],
+    limit: int = Query(default=100, ge=1, le=500),
+) -> list[PNCPProcessingRunResponse]:
+    return PNCPOpportunityService(db).list_processing_runs(limit=limit)
+
+
+@router.get(
+    "/{assessment_id}/historico",
+    response_model=list[PNCPOpportunityHistoryResponse],
+)
+def list_assessment_history(
+    assessment_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> list[PNCPOpportunityHistoryResponse]:
+    return PNCPOpportunityService(db).list_assessment_history(assessment_id)
 
 
 @router.get("", response_model=list[PNCPOpportunityResponse])

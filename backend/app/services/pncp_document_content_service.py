@@ -38,6 +38,7 @@ class ExtractedDocument:
 
 
 class PNCPDocumentContentService:
+    EXTRACTOR_VERSION = "1.0.0"
     TEXT_CONTENT_TYPES = (
         "text/",
         "application/json",
@@ -166,6 +167,7 @@ class PNCPDocumentContentService:
         document.conteudo_tipo = content_type or None
         document.conteudo_tamanho = len(content)
         document.conteudo_sha256 = hashlib.sha256(content).hexdigest()
+        document.extrator_versao = self.EXTRACTOR_VERSION
         document.conteudo_analisado_em = datetime.now(UTC)
         document.extracao_erro = None
 

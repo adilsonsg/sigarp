@@ -108,3 +108,4 @@ async def test_analyze_document_persists_text(db_session: Session) -> None:
     assert document.extracao_status == "SUCESSO"
     assert document.texto_extraido == "Projetor laser Full HD Wi-Fi"
     assert document.conteudo_sha256 is not None
+    assert document.extrator_versao == "1.0.0"

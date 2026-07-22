@@ -2,6 +2,25 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.6.0-alpha1] - 2026-07-22
+
+### Adicionado
+
+- registro de cada execução de classificação, incluindo parâmetros, status,
+  estatísticas, versão do perfil e versão do analisador;
+- snapshots imutáveis das avaliações para cada reprocessamento;
+- endpoints de consulta de execuções e histórico por avaliação;
+- SHA-256 e datas de origem/análise na cadeia de evidência documental;
+- versão do extrator, data da primeira coleta e relatório por requisito com
+  trechos de origem;
+- migração Alembic `20260722_0009` e ADR de rastreabilidade.
+
+### Alterado
+
+- avaliações correntes passam a apontar para a última execução responsável;
+- comando de classificação informa `execucao_id` e `status_execucao`;
+- versão da aplicação para `0.6.0-alpha1`.
+
 ## [0.5.0-alpha6] - 2026-07-22
 
 ### Adicionado

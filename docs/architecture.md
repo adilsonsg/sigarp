@@ -12,7 +12,8 @@ flowchart TD
     RAW --> EXT["Extração e estruturação"]
     EXT --> CLS["Classificação de oportunidade"]
     CLS --> PRF["Perfil técnico versionado"]
-    PRF --> API["API FastAPI"]
+    PRF --> AUD["Execução e snapshot histórico"]
+    AUD --> API["API FastAPI"]
 ```
 
 A API valida contratos e traduz erros; serviços orquestram casos de uso;
@@ -55,10 +56,12 @@ Isso permite testar e evoluir a inicialização sem concentrar tudo em `main.py`
 - extração não decide adequação;
 - perfis não contêm marca, fabricante, fornecedor ou família comercial;
 - avaliações registram a versão do perfil;
+- extrações e reprocessamentos registram as versões do extrator e do analisador;
+- o estado corrente não substitui snapshots históricos;
 - uma futura integração SUAP deve usar adaptador próprio, idempotência e fila
   persistente, sem acoplamento ao domínio de busca.
 
 ## Decisões
 
 As decisões arquiteturais estão em `docs/adr`. O ADR-005 torna obrigatórios os
-perfis neutros e versionados a partir da alpha6.
+perfis neutros e versionados; o ADR-006 define a trilha de execução e histórico.

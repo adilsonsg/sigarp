@@ -34,6 +34,14 @@ class PNCPOpportunityAssessmentRecord(Base):
     )
     perfil: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     perfil_versao: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
+    analisador_versao: Mapped[str] = mapped_column(
+        String(30), nullable=False, default="legacy-unknown", index=True
+    )
+    ultima_execucao_id: Mapped[int | None] = mapped_column(
+        ForeignKey("pncp_processing_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     classificacao: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     pontuacao: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     termos_encontrados: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
@@ -69,4 +77,10 @@ class PNCPOpportunityAssessmentRecord(Base):
 
     contracting = relationship(
         "PNCPContractingRecord", back_populates="opportunity_assessments"
+    )
+    ultima_execucao = relationship("PNCPProcessingRunRecord")
+    historicos = relationship(
+        "PNCPOpportunityAssessmentHistoryRecord",
+        back_populates="assessment",
+        passive_deletes=True,
     )

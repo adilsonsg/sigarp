@@ -25,7 +25,10 @@ class PNCPOpportunityAssessmentRepository:
         )
 
     def upsert(
-        self, payload: PNCPOpportunityAssessmentInput
+        self,
+        payload: PNCPOpportunityAssessmentInput,
+        *,
+        execucao_id: int | None = None,
     ) -> tuple[PNCPOpportunityAssessmentRecord, bool]:
         record = self.get(
             payload.contracting_id,
@@ -40,6 +43,7 @@ class PNCPOpportunityAssessmentRepository:
         else:
             for field, value in data.items():
                 setattr(record, field, value)
+        record.ultima_execucao_id = execucao_id
         record.classificado_em = datetime.now(UTC)
         self.db.flush()
         return record, created
