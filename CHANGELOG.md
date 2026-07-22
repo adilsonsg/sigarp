@@ -27,6 +27,14 @@ Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
   check e metadados OpenAPI permanecem públicos.
 - senha de PostgreSQL removida do repositório e exigida por variável de ambiente.
 
+### Validado
+
+- migração `20260722_0010` aprovada em PostgreSQL 16.14;
+- 72 testes automatizados e verificações Ruff, Black e isort aprovados;
+- matriz com nove cenários de autenticação e autorização aprovada;
+- duas revisões sucessivas confirmaram autoria, transição de estado, vínculo com
+  a execução automática e preservação imutável do primeiro evento.
+
 ## [0.6.0-alpha1] - 2026-07-22
 
 ### Adicionado

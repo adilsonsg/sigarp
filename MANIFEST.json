@@ -6,6 +6,6 @@
   "test_count": 72,
   "migration_head": "20260722_0010",
   "python_compile_validation": true,
-  "postgresql_validation": false,
+  "postgresql_validation": true,
   "quality_checks": ["ruff", "black", "isort", "pytest"]
 }
