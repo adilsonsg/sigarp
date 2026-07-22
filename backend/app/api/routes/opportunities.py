@@ -9,9 +9,22 @@ from app.schemas.pncp_opportunities import (
     PNCPOpportunityResponse,
     PNCPProcessingRunResponse,
 )
+from app.schemas.pncp_reviews import (
+    PNCPOpportunityReviewCreate,
+    PNCPOpportunityReviewResponse,
+)
+from app.security.authentication import require_minimum_role
+from app.security.models import AccessRole, AuthenticatedPrincipal
+from app.services.pncp_opportunity_review_service import (
+    PNCPOpportunityReviewService,
+)
 from app.services.pncp_opportunity_service import PNCPOpportunityService
 
-router = APIRouter(prefix="/pncp/oportunidades", tags=["Oportunidades PNCP"])
+router = APIRouter(
+    prefix="/pncp/oportunidades",
+    tags=["Oportunidades PNCP"],
+    dependencies=[Depends(require_minimum_role(AccessRole.LEITOR))],
+)
 
 
 @router.get("/execucoes", response_model=list[PNCPProcessingRunResponse])
@@ -31,6 +44,37 @@ def list_assessment_history(
     db: Annotated[Session, Depends(get_db)],
 ) -> list[PNCPOpportunityHistoryResponse]:
     return PNCPOpportunityService(db).list_assessment_history(assessment_id)
+
+
+@router.patch(
+    "/{assessment_id}/revisao",
+    response_model=PNCPOpportunityReviewResponse,
+)
+def review_opportunity(
+    assessment_id: int,
+    payload: PNCPOpportunityReviewCreate,
+    principal: Annotated[
+        AuthenticatedPrincipal,
+        Depends(require_minimum_role(AccessRole.ANALISTA)),
+    ],
+    db: Annotated[Session, Depends(get_db)],
+) -> PNCPOpportunityReviewResponse:
+    return PNCPOpportunityReviewService(db).review(
+        assessment_id,
+        payload,
+        principal,
+    )
+
+
+@router.get(
+    "/{assessment_id}/revisoes",
+    response_model=list[PNCPOpportunityReviewResponse],
+)
+def list_opportunity_reviews(
+    assessment_id: int,
+    db: Annotated[Session, Depends(get_db)],
+) -> list[PNCPOpportunityReviewResponse]:
+    return PNCPOpportunityReviewService(db).list_by_assessment(assessment_id)
 
 
 @router.get("", response_model=list[PNCPOpportunityResponse])

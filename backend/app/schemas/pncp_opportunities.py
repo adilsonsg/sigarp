@@ -96,6 +96,9 @@ class PNCPOpportunityResponse(BaseModel):
     requisitos_nao_atendidos: list[str] = Field(default_factory=list)
     requisitos_nao_comprovados: list[str] = Field(default_factory=list)
     dados_estruturados: dict[str, Any] = Field(default_factory=dict)
+    revisao_status: str | None = None
+    revisado_por: str | None = None
+    revisado_em: datetime | None = None
     classificado_em: datetime
     numero_controle_pncp: str
     orgao_razao_social: str | None = None

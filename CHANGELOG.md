@@ -2,6 +2,31 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.7.0-alpha1] - 2026-07-22
+
+### Adicionado
+
+- autenticação Bearer fail-closed com configuração contendo somente SHA-256 de
+  tokens fortes;
+- papéis hierárquicos `leitor`, `analista` e `administrador`;
+- endpoint `GET /auth/me` para consulta da identidade autenticada;
+- revisão humana com autor, papel, justificativa, data e valores anterior/novo;
+- histórico imutável de revisões e migração Alembic `20260722_0010`;
+- ADR e guia operacional de segurança e rotação de tokens.
+
+### Alterado
+
+- consultas exigem papel leitor, revisão exige analista e cadastro de órgãos
+  exige administrador;
+- versão da aplicação para `0.7.0-alpha1`.
+
+### Segurança
+
+- tokens em claro não são persistidos nem incluídos em logs;
+- configuração vazia nega todas as rotas de dados protegidas; apenas health
+  check e metadados OpenAPI permanecem públicos.
+- senha de PostgreSQL removida do repositório e exigida por variável de ambiente.
+
 ## [0.6.0-alpha1] - 2026-07-22
 
 ### Adicionado

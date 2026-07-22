@@ -4,15 +4,19 @@ services:
     container_name: sigarp_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: sigarp
-      POSTGRES_USER: sigarp
-      POSTGRES_PASSWORD: sigarp123
+      POSTGRES_DB: "${POSTGRES_DB:-sigarp}"
+      POSTGRES_USER: "${POSTGRES_USER:-sigarp}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sigarp -d sigarp"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-sigarp} -d ${POSTGRES_DB:-sigarp}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -24,18 +28,19 @@ services:
     restart: unless-stopped
     environment:
       APP_NAME: SIGARP
-      APP_VERSION: 0.6.0-alpha1
+      APP_VERSION: 0.7.0-alpha1
       APP_ENV: development
       LOG_LEVEL: INFO
-      DATABASE_URL: postgresql+psycopg2://sigarp:sigarp123@postgres:5432/sigarp
+      DATABASE_URL: "postgresql+psycopg2://${POSTGRES_USER:-sigarp}:${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}@postgres:5432/${POSTGRES_DB:-sigarp}"
       PNCP_BASE_URL: https://pncp.gov.br/api/consulta
       PNCP_TIMEOUT_SECONDS: 30
       PNCP_MAX_RETRIES: 7
       PNCP_BACKOFF_SECONDS: 5
-      PNCP_USER_AGENT: SIGARP/0.6.0-alpha1 (IFMT)
+      PNCP_USER_AGENT: SIGARP/0.7.0-alpha1 (IFMT)
       PNCP_DOCUMENT_MAX_BYTES: 50000000
       PNCP_DOCUMENT_MAX_TEXT_CHARS: 2000000
       PNCP_DOCUMENT_MAX_PAGES: 1000
+      AUTH_PRINCIPALS: "${AUTH_PRINCIPALS:-[]}"
     ports:
       - "8000:8000"
     depends_on:

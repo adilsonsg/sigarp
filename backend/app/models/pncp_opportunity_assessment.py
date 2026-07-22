@@ -61,6 +61,15 @@ class PNCPOpportunityAssessmentRecord(Base):
     dados_estruturados: Mapped[dict[str, Any] | None] = mapped_column(
         JSON, nullable=True
     )
+    revisao_status: Mapped[str | None] = mapped_column(
+        String(40), nullable=True, index=True
+    )
+    revisado_por: Mapped[str | None] = mapped_column(
+        String(150), nullable=True, index=True
+    )
+    revisado_em: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     classificado_em: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -81,6 +90,11 @@ class PNCPOpportunityAssessmentRecord(Base):
     ultima_execucao = relationship("PNCPProcessingRunRecord")
     historicos = relationship(
         "PNCPOpportunityAssessmentHistoryRecord",
+        back_populates="assessment",
+        passive_deletes=True,
+    )
+    revisoes = relationship(
+        "PNCPOpportunityReviewRecord",
         back_populates="assessment",
         passive_deletes=True,
     )

@@ -7,8 +7,14 @@ from pydantic import ValidationError
 
 from app.collectors.pncp.schemas import PNCPSearchRequest, PNCPSearchResponse
 from app.collectors.pncp.service import PNCPSearchService
+from app.security.authentication import require_minimum_role
+from app.security.models import AccessRole
 
-router = APIRouter(prefix="/pncp", tags=["PNCP"])
+router = APIRouter(
+    prefix="/pncp",
+    tags=["PNCP"],
+    dependencies=[Depends(require_minimum_role(AccessRole.LEITOR))],
+)
 
 
 def get_pncp_search_service() -> PNCPSearchService:

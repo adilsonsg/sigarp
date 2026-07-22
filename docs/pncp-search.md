@@ -7,6 +7,11 @@
 - `GET /pncp/oportunidades`: oportunidades classificadas e avaliadas.
 - `GET /pncp/oportunidades/execucoes`: lotes de classificação auditáveis;
 - `GET /pncp/oportunidades/{assessment_id}/historico`: snapshots anteriores.
+- `PATCH /pncp/oportunidades/{assessment_id}/revisao`: decisão humana auditável;
+- `GET /pncp/oportunidades/{assessment_id}/revisoes`: histórico de decisões.
+
+Todas essas rotas exigem Bearer token e papel `leitor`; a operação de revisão
+exige no mínimo `analista`.
 
 O serviço consulta o recurso público do PNCP para contratações por data de publicação:
 

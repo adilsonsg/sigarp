@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.api.error_handlers import register_exception_handlers
 from app.api.responses import UTF8JSONResponse
+from app.api.routes.auth import router as auth_router
 from app.api.routes.opportunities import router as opportunities_router
 from app.api.routes.organizations import router as organizations_router
 from app.api.routes.pncp import router as pncp_router
@@ -25,6 +26,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(application)
 
     application.include_router(system_router)
+    application.include_router(auth_router)
     application.include_router(organizations_router)
     application.include_router(pncp_router)
     application.include_router(opportunities_router)

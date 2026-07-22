@@ -65,7 +65,7 @@ e instante de processamento.
 
 - Labels sugeridos: `P0`, `security`, `api`
 - Dependências: P0-01
-- Estado: pendente
+- Estado: implementado tecnicamente na `0.7.0-alpha1`; aguarda validação PostgreSQL
 
 ### Objetivo
 

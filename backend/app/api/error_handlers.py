@@ -26,6 +26,7 @@ def register_exception_handlers(app: FastAPI) -> None:
                 "code": exception.code,
                 "request_id": getattr(request.state, "request_id", None),
             },
+            headers=exception.headers,
         )
 
     @app.exception_handler(RemoteAPIRateLimitError)

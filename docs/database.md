@@ -34,6 +34,7 @@ docker compose exec backend alembic downgrade -1
 | `pncp_opportunity_assessments` | classificação, evidências e adequação técnica |
 | `pncp_processing_runs` | execução, parâmetros, versões, status e estatísticas |
 | `pncp_opportunity_assessment_history` | snapshot imutável de cada avaliação executada |
+| `pncp_opportunity_reviews` | decisões humanas imutáveis com identidade e antes/depois |
 
 ## Integridade das avaliações
 
@@ -53,8 +54,13 @@ Cada reprocessamento cria uma linha em `pncp_processing_runs` e um snapshot por
 contratação em `pncp_opportunity_assessment_history`. A tabela corrente continua
 com uma linha por contratação, perfil e versão.
 
+O estado corrente da revisão fica em `revisao_status`, `revisado_por` e
+`revisado_em`. Cada mudança cria uma linha em `pncp_opportunity_reviews`, ligada
+à execução automática e ao snapshot do resultado avaliado; chaves estrangeiras
+`RESTRICT` impedem exclusão silenciosa da avaliação ou execução revisada.
+
 ## Migração corrente
 
-O head esperado é `20260722_0009`. O downgrade para 0007 consolida múltiplas
+O head esperado é `20260722_0010`. O downgrade para 0007 consolida múltiplas
 versões em um registro por contratação e perfil; portanto, não deve ser executado
 em produção sem cópia de segurança e plano de reversão.

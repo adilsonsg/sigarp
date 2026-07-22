@@ -14,6 +14,9 @@ flowchart TD
     CLS --> PRF["Perfil técnico versionado"]
     PRF --> AUD["Execução e snapshot histórico"]
     AUD --> API["API FastAPI"]
+    ID["Identidade configurada"] --> AUTH["Autenticação e papéis"]
+    AUTH --> API
+    API --> REV["Revisão humana auditável"]
 ```
 
 A API valida contratos e traduz erros; serviços orquestram casos de uso;
@@ -42,6 +45,7 @@ repositórios isolam a persistência; modelos SQLAlchemy representam o PostgreSQ
 - Rastreabilidade.
 - Perfis imutáveis por versão.
 - Classificação automatizada não substitui decisão humana.
+- Autenticação fail-closed e privilégio mínimo.
 - Migrations obrigatórias.
 - Configuração por variáveis de ambiente.
 
@@ -58,10 +62,14 @@ Isso permite testar e evoluir a inicialização sem concentrar tudo em `main.py`
 - avaliações registram a versão do perfil;
 - extrações e reprocessamentos registram as versões do extrator e do analisador;
 - o estado corrente não substitui snapshots históricos;
+- autenticação não conhece regras de domínio e autorização não recebe tokens em
+  claro além do instante de verificação;
+- revisões humanas são eventos imutáveis separados da classificação automática;
 - uma futura integração SUAP deve usar adaptador próprio, idempotência e fila
   persistente, sem acoplamento ao domínio de busca.
 
 ## Decisões
 
 As decisões arquiteturais estão em `docs/adr`. O ADR-005 torna obrigatórios os
-perfis neutros e versionados; o ADR-006 define a trilha de execução e histórico.
+perfis neutros e versionados; o ADR-006 define a trilha de execução e histórico;
+o ADR-007 estabelece autenticação, papéis e revisão humana auditável.

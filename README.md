@@ -4,8 +4,8 @@ Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
 
-`0.6.0-alpha1` — busca PNCP, avaliação técnica neutra e trilha de auditoria por
-execução e reprocessamento.
+`0.7.0-alpha1` — busca PNCP, avaliação técnica neutra, trilha de auditoria e
+controle de acesso por identidade e papel.
 
 ## Tecnologias
 
@@ -55,6 +55,7 @@ docker compose run --rm backend ruff check . --fix
 ## Endpoints atuais
 
 - `GET /health`
+- `GET /auth/me`
 - `POST /orgaos`
 - `GET /orgaos`
 - `GET /orgaos/{id}`
@@ -63,6 +64,16 @@ docker compose run --rm backend ruff check . --fix
 - `GET /pncp/oportunidades`
 - `GET /pncp/oportunidades/execucoes`
 - `GET /pncp/oportunidades/{assessment_id}/historico`
+- `PATCH /pncp/oportunidades/{assessment_id}/revisao`
+- `GET /pncp/oportunidades/{assessment_id}/revisoes`
+
+## Controle de acesso
+
+As rotas de dados exigem `Authorization: Bearer <token>`; `/health` e os
+metadados OpenAPI permanecem públicos. O backend guarda apenas SHA-256 de tokens
+fortes configurados por ambiente. Os
+papéis são `leitor`, `analista` e `administrador`; revisão humana exige analista,
+e cadastro administrativo exige administrador. Consulte `docs/security.md`.
 
 ## Avaliação técnica neutra
 
@@ -80,10 +91,11 @@ resultado de cada reprocessamento e a versão do analisador utilizada.
 
 ## Documentação
 
-- `INSTALAR_V0.6.0_ALPHA1.md`
-- `VALIDACAO_V0.6.0_ALPHA1.md`
+- `INSTALAR_V0.7.0_ALPHA1.md`
+- `VALIDACAO_V0.7.0_ALPHA1.md`
 - `docs/architecture.md`
 - `docs/database.md`
+- `docs/security.md`
 - `docs/contributing.md`
 - `docs/adr/`
 - `docs/backlog/ETAPA_0_ISSUES.md`

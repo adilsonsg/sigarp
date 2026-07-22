@@ -1,11 +1,11 @@
 {
   "project": "SIGARP",
-  "version": "0.6.0-alpha1",
-  "stage": "Etapa 1 - rastreabilidade e auditoria",
-  "file_count": 168,
-  "test_count": 60,
-  "migration_head": "20260722_0009",
+  "version": "0.7.0-alpha1",
+  "stage": "Etapa 2 - identidade, autorizacao e revisao humana",
+  "file_count": 184,
+  "test_count": 72,
+  "migration_head": "20260722_0010",
   "python_compile_validation": true,
-  "postgresql_validation": true,
+  "postgresql_validation": false,
   "quality_checks": ["ruff", "black", "isort", "pytest"]
 }
