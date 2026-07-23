@@ -64,6 +64,17 @@ papel, justificativa, data, execução automática avaliada, snapshot do resulta
 valores anterior/novo. O estado corrente fica na avaliação; eventos anteriores
 não são sobrescritos.
 
+## Vulnerabilidades e cadeia de suprimentos
+
+O canal de reporte, versões atendidas e metas iniciais estão em `SECURITY.md`.
+Detalhes da varredura de segredos, auditoria de dependências, SBOM e checksums
+estão em `docs/supply-chain.md`.
+
+Falhas confirmadas de severidade alta ou crítica bloqueiam a integração. Qualquer
+exceção precisa de responsável, justificativa, mitigação e prazo. Um segredo
+detectado é tratado como comprometido: revogue ou rotacione primeiro e só depois
+remova a exposição do código ou do histórico.
+
 ## Regras operacionais
 
 - não registrar cabeçalho `Authorization`;
@@ -73,3 +84,5 @@ não são sobrescritos.
 - limitar acesso ao `.env` e aos backups;
 - investigar repetição de `401` e `403` no gateway/reverse proxy;
 - substituir imediatamente qualquer token exposto.
+- manter Actions e dependências sob atualização e revisão automatizadas;
+- anexar SBOM e checksums a cada release.

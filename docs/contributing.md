@@ -30,9 +30,22 @@ docker compose run --rm backend isort --check-only .
 docker compose run --rm backend pytest -v
 ```
 
+O GitHub também executa Gitleaks, `pip-audit` e Dependency Review. Antes de abrir
+o pull request, confira que nenhum segredo, `.env`, banco ou backup entrou no
+diff:
+
+```bash
+git status --short
+git diff --check
+git diff --cached
+```
+
 ## Regras
 
 - Não incluir segredos.
 - Não editar migrations já publicadas.
 - Não acessar banco diretamente nas rotas.
 - Não remover rastreabilidade de dados oficiais.
+- Não suprimir alerta de segurança sem exceção documentada, responsável e prazo.
+- Não escolher licença ou base legal em nome da instituição.
+- Não editar artefatos de release manualmente depois da geração automatizada.

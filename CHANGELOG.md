@@ -2,6 +2,32 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.8.0-alpha1] - 2026-07-23
+
+### Adicionado
+
+- workflow contínuo com Gitleaks, `pip-audit` e Dependency Review;
+- Dependabot semanal para dependências Python e GitHub Actions;
+- geração automática de pacote da tag, SBOM SPDX JSON e checksums SHA-256;
+- política privada de reporte e tratamento de vulnerabilidades;
+- inventário preliminar de dados e registro de decisões institucionais pendentes;
+- guias de instalação, validação e cadeia de suprimentos da versão.
+
+### Alterado
+
+- GitHub Actions oficiais atualizadas para versões baseadas em Node 24;
+- checkout de CI sem persistência de credenciais e com permissões mínimas;
+- FastAPI, Starlette, Pytest, pytest-asyncio, pytest-cov e Black atualizados para
+  versões sem os alertas encontrados pela auditoria;
+- baseline da aplicação atualizada para `0.8.0-alpha1`.
+
+### Conformidade
+
+- licença, base legal, agentes de tratamento, retenção e homologação de produção
+  permanecem explicitamente sujeitos à aprovação formal do IFMT;
+- nenhuma hipótese legal ou autorização de distribuição foi presumida pelo
+  projeto.
+
 ## [0.7.0-alpha1] - 2026-07-22
 
 ### Adicionado

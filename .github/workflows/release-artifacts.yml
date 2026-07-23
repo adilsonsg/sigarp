@@ -1,0 +1,92 @@
+name: Release artifacts
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag de uma release já criada
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: release-artifacts-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Pacote, SBOM e checksums
+    runs-on: ubuntu-latest
+    env:
+      TAG_NAME: ${{ github.event.release.tag_name || inputs.tag }}
+
+    steps:
+      - name: Checkout da tag
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.TAG_NAME }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validar tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "${TAG_NAME}"
+          git rev-parse --verify "refs/tags/${TAG_NAME}^{commit}"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse "${TAG_NAME}^{commit}")"
+
+      - name: Preparar diretório de artefatos
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+      - name: Gerar SBOM SPDX JSON
+        uses: anchore/sbom-action@v0
+        with:
+          path: .
+          format: spdx-json
+          output-file: dist/SIGARP-${{ env.TAG_NAME }}-sbom.spdx.json
+          artifact-name: SIGARP-${{ env.TAG_NAME }}-sbom.spdx.json
+          dependency-snapshot: true
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Gerar pacote da árvore versionada
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${TAG_NAME#v}"
+          git archive \
+            --format=zip \
+            --prefix="SIGARP-${TAG_NAME}/" \
+            --output="dist/SIGARP-${version}-release.zip" \
+            "${TAG_NAME}^{commit}"
+
+      - name: Gerar SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum \
+            "SIGARP-${TAG_NAME#v}-release.zip" \
+            "SIGARP-${TAG_NAME}-sbom.spdx.json" \
+            > "SHA256SUMS-${TAG_NAME}.txt"
+
+      - name: Publicar artefatos na release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release upload \
+            "${TAG_NAME}" \
+            dist/* \
+            --clobber \
+            --repo "${GITHUB_REPOSITORY}"

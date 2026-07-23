@@ -4,8 +4,8 @@ Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
 
-`0.7.0-alpha1` — busca PNCP, avaliação técnica neutra, trilha de auditoria e
-controle de acesso por identidade e papel.
+`0.8.0-alpha1` — busca PNCP, avaliação técnica neutra, trilha de auditoria,
+controle de acesso e controles automatizados de segurança da entrega.
 
 ## Tecnologias
 
@@ -20,6 +20,7 @@ controle de acesso por identidade e papel.
 - Black
 - isort
 - GitHub Actions
+- Gitleaks, pip-audit e SBOM SPDX
 
 ## Início rápido
 
@@ -75,6 +76,17 @@ fortes configurados por ambiente. Os
 papéis são `leitor`, `analista` e `administrador`; revisão humana exige analista,
 e cadastro administrativo exige administrador. Consulte `docs/security.md`.
 
+## Segurança da entrega e conformidade
+
+O CI verifica segredos, dependências e novas vulnerabilidades. Cada GitHub
+Release recebe pacote produzido da tag, SBOM SPDX JSON e checksums SHA-256.
+Dependências Python e Actions são acompanhadas semanalmente pelo Dependabot.
+
+O inventário preliminar de dados está documentado, mas licença, base legal,
+retenção, agentes de tratamento e aprovação de produção continuam como decisões
+formais do IFMT. A versão alpha não deve ser tratada como homologada para
+produção.
+
 ## Avaliação técnica neutra
 
 O perfil corrente está em
@@ -91,11 +103,14 @@ resultado de cada reprocessamento e a versão do analisador utilizada.
 
 ## Documentação
 
-- `INSTALAR_V0.7.0_ALPHA1.md`
-- `VALIDACAO_V0.7.0_ALPHA1.md`
+- `INSTALAR_V0.8.0_ALPHA1.md`
+- `VALIDACAO_V0.8.0_ALPHA1.md`
 - `docs/architecture.md`
 - `docs/database.md`
 - `docs/security.md`
+- `docs/supply-chain.md`
+- `docs/compliance/data-inventory.md`
+- `docs/compliance/institutional-decisions.md`
 - `docs/contributing.md`
 - `docs/adr/`
 - `docs/backlog/ETAPA_0_ISSUES.md`
