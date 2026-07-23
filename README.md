@@ -4,8 +4,8 @@ Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
 
-`0.8.0-alpha1` — busca PNCP, avaliação técnica neutra, trilha de auditoria,
-controle de acesso e controles automatizados de segurança da entrega.
+`0.9.0-alpha1` — API pública versionada, busca PNCP, avaliação técnica neutra,
+trilha de auditoria, controle de acesso e segurança automatizada da entrega.
 
 ## Tecnologias
 
@@ -36,6 +36,7 @@ Acessos:
 - API: http://127.0.0.1:8000
 - Swagger: http://127.0.0.1:8000/docs
 - Health: http://127.0.0.1:8000/health
+- API v1: http://127.0.0.1:8000/api/v1
 
 ## Qualidade
 
@@ -53,20 +54,25 @@ docker compose run --rm backend isort .
 docker compose run --rm backend ruff check . --fix
 ```
 
-## Endpoints atuais
+## API pública v1
 
-- `GET /health`
-- `GET /auth/me`
-- `POST /orgaos`
-- `GET /orgaos`
-- `GET /orgaos/{id}`
-- `POST /pncp/contratacoes/pesquisar`
-- `GET /pncp/search`
-- `GET /pncp/oportunidades`
-- `GET /pncp/oportunidades/execucoes`
-- `GET /pncp/oportunidades/{assessment_id}/historico`
-- `PATCH /pncp/oportunidades/{assessment_id}/revisao`
-- `GET /pncp/oportunidades/{assessment_id}/revisoes`
+- `GET /api/v1/health`
+- `GET /api/v1/auth/me`
+- `POST /api/v1/orgaos`
+- `GET /api/v1/orgaos`
+- `GET /api/v1/orgaos/{id}`
+- `POST /api/v1/pncp/contratacoes/pesquisar`
+- `GET /api/v1/pncp/search`
+- `GET /api/v1/pncp/oportunidades`
+- `GET /api/v1/pncp/oportunidades/execucoes`
+- `GET /api/v1/pncp/oportunidades/{assessment_id}/historico`
+- `PATCH /api/v1/pncp/oportunidades/{assessment_id}/revisao`
+- `GET /api/v1/pncp/oportunidades/{assessment_id}/revisoes`
+
+As coleções locais retornam `items`, `page`, `page_size`, `total` e
+`total_pages`. Erros possuem `detail`, `code`, `request_id` e `errors`. As rotas
+sem prefixo continuam disponíveis temporariamente e aparecem como depreciadas no
+OpenAPI. Consulte `docs/api-versioning.md`.
 
 ## Controle de acesso
 
@@ -103,8 +109,9 @@ resultado de cada reprocessamento e a versão do analisador utilizada.
 
 ## Documentação
 
-- `INSTALAR_V0.8.0_ALPHA1.md`
-- `VALIDACAO_V0.8.0_ALPHA1.md`
+- `INSTALAR_V0.9.0_ALPHA1.md`
+- `VALIDACAO_V0.9.0_ALPHA1.md`
+- `docs/api-versioning.md`
 - `docs/architecture.md`
 - `docs/database.md`
 - `docs/security.md`

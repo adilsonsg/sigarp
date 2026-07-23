@@ -2,6 +2,30 @@
 
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
+## [0.9.0-alpha1] - 2026-07-23
+
+### Adicionado
+
+- prefixo canônico `/api/v1` para a API pública;
+- paginação padronizada com `items`, `page`, `page_size`, `total` e
+  `total_pages` nas coleções locais;
+- contrato único de erros com `detail`, `code`, `request_id` e detalhes de
+  validação;
+- testes de contrato OpenAPI, compatibilidade, paginação e correlação de erros;
+- política explícita de compatibilidade e depreciação da API.
+
+### Compatibilidade
+
+- rotas sem prefixo continuam funcionais durante a transição;
+- rotas legadas de dados aparecem como depreciadas no OpenAPI;
+- nenhuma migration de banco foi adicionada; o head permanece
+  `20260722_0010`.
+
+### Validado
+
+- 78 testes automatizados aprovados;
+- Ruff, Black, isort e compilação Python aprovados.
+
 ## [0.8.0-alpha1] - 2026-07-23
 
 ### Adicionado

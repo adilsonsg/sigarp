@@ -3,7 +3,7 @@ import unicodedata
 from decimal import Decimal
 from typing import Any, ClassVar
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.pncp_contracting import PNCPContractingRecord
@@ -377,8 +377,12 @@ class PNCPOpportunityService:
         skip: int = 0,
         limit: int = 100,
     ) -> list[PNCPOpportunityResponse]:
-        selected_profile_version = (
-            perfil_versao or ProjectorProfileAnalyzer.PROFILE.versao
+        filters = self._opportunity_filters(
+            perfil=perfil,
+            perfil_versao=perfil_versao,
+            classificacao=classificacao,
+            adequacao=adequacao,
+            uf=uf,
         )
         statement = (
             select(PNCPOpportunityAssessmentRecord)
@@ -391,11 +395,7 @@ class PNCPOpportunityService:
                     PNCPContractingRecord.documents
                 ),
             )
-            .where(PNCPOpportunityAssessmentRecord.perfil == perfil)
-            .where(
-                PNCPOpportunityAssessmentRecord.perfil_versao
-                == selected_profile_version
-            )
+            .where(*filters)
             .order_by(
                 PNCPOpportunityAssessmentRecord.pontuacao_adequacao.desc(),
                 PNCPOpportunityAssessmentRecord.pontuacao.desc(),
@@ -404,19 +404,61 @@ class PNCPOpportunityService:
             .offset(skip)
             .limit(limit)
         )
-        if classificacao:
-            statement = statement.where(
-                PNCPOpportunityAssessmentRecord.classificacao == classificacao
-            )
-        if adequacao:
-            statement = statement.where(
-                PNCPOpportunityAssessmentRecord.adequacao_perfil == adequacao
-            )
-        if uf:
-            statement = statement.where(PNCPContractingRecord.uf == uf.strip().upper())
         return [
             self._response(record) for record in self.db.scalars(statement).unique()
         ]
+
+    def count_opportunities(
+        self,
+        *,
+        perfil: str = "projetores",
+        perfil_versao: str | None = None,
+        classificacao: str | None = None,
+        adequacao: str | None = None,
+        uf: str | None = None,
+    ) -> int:
+        statement = (
+            select(func.count(PNCPOpportunityAssessmentRecord.id))
+            .join(PNCPOpportunityAssessmentRecord.contracting)
+            .where(
+                *self._opportunity_filters(
+                    perfil=perfil,
+                    perfil_versao=perfil_versao,
+                    classificacao=classificacao,
+                    adequacao=adequacao,
+                    uf=uf,
+                )
+            )
+        )
+        return int(self.db.scalar(statement) or 0)
+
+    @staticmethod
+    def _opportunity_filters(
+        *,
+        perfil: str,
+        perfil_versao: str | None,
+        classificacao: str | None,
+        adequacao: str | None,
+        uf: str | None,
+    ) -> list[Any]:
+        selected_profile_version = (
+            perfil_versao or ProjectorProfileAnalyzer.PROFILE.versao
+        )
+        filters: list[Any] = [
+            PNCPOpportunityAssessmentRecord.perfil == perfil,
+            PNCPOpportunityAssessmentRecord.perfil_versao == selected_profile_version,
+        ]
+        if classificacao:
+            filters.append(
+                PNCPOpportunityAssessmentRecord.classificacao == classificacao
+            )
+        if adequacao:
+            filters.append(
+                PNCPOpportunityAssessmentRecord.adequacao_perfil == adequacao
+            )
+        if uf:
+            filters.append(PNCPContractingRecord.uf == uf.strip().upper())
+        return filters
 
     @staticmethod
     def _response(
@@ -487,7 +529,10 @@ class PNCPOpportunityService:
         )
 
     def list_processing_runs(
-        self, *, limit: int = 100
+        self,
+        *,
+        skip: int = 0,
+        limit: int = 100,
     ) -> list[PNCPProcessingRunResponse]:
         return [
             PNCPProcessingRunResponse(
@@ -503,11 +548,18 @@ class PNCPOpportunityService:
                 iniciado_em=run.iniciado_em,
                 concluido_em=run.concluido_em,
             )
-            for run in self.audit_repository.list_runs(limit=limit)
+            for run in self.audit_repository.list_runs(skip=skip, limit=limit)
         ]
 
+    def count_processing_runs(self) -> int:
+        return self.audit_repository.count_runs()
+
     def list_assessment_history(
-        self, assessment_id: int
+        self,
+        assessment_id: int,
+        *,
+        skip: int = 0,
+        limit: int | None = None,
     ) -> list[PNCPOpportunityHistoryResponse]:
         return [
             PNCPOpportunityHistoryResponse(
@@ -526,8 +578,15 @@ class PNCPOpportunityService:
                 classificado_em=history.classificado_em,
                 criado_em=history.criado_em,
             )
-            for history in self.audit_repository.list_assessment_history(assessment_id)
+            for history in self.audit_repository.list_assessment_history(
+                assessment_id,
+                skip=skip,
+                limit=limit,
+            )
         ]
+
+    def count_assessment_history(self, assessment_id: int) -> int:
+        return self.audit_repository.count_assessment_history(assessment_id)
 
     @classmethod
     def _technical_assessment(

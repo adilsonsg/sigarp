@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import AccessDeniedError, ResourceNotFoundError
@@ -75,8 +75,33 @@ class PNCPOpportunityReviewRepository:
         return review
 
     def list_by_assessment(
-        self, assessment_id: int
+        self,
+        assessment_id: int,
+        *,
+        skip: int = 0,
+        limit: int | None = None,
     ) -> list[PNCPOpportunityReviewRecord]:
+        self._ensure_assessment_exists(assessment_id)
+        statement = (
+            select(PNCPOpportunityReviewRecord)
+            .where(PNCPOpportunityReviewRecord.assessment_id == assessment_id)
+            .order_by(PNCPOpportunityReviewRecord.id.desc())
+            .offset(skip)
+        )
+        if limit is not None:
+            statement = statement.limit(limit)
+        return list(self.db.scalars(statement))
+
+    def count_by_assessment(self, assessment_id: int) -> int:
+        self._ensure_assessment_exists(assessment_id)
+        statement = (
+            select(func.count())
+            .select_from(PNCPOpportunityReviewRecord)
+            .where(PNCPOpportunityReviewRecord.assessment_id == assessment_id)
+        )
+        return int(self.db.scalar(statement) or 0)
+
+    def _ensure_assessment_exists(self, assessment_id: int) -> None:
         assessment_exists = self.db.scalar(
             select(PNCPOpportunityAssessmentRecord.id).where(
                 PNCPOpportunityAssessmentRecord.id == assessment_id
@@ -84,9 +109,3 @@ class PNCPOpportunityReviewRepository:
         )
         if assessment_exists is None:
             raise ResourceNotFoundError("Avaliação não encontrada.")
-        statement = (
-            select(PNCPOpportunityReviewRecord)
-            .where(PNCPOpportunityReviewRecord.assessment_id == assessment_id)
-            .order_by(PNCPOpportunityReviewRecord.id.desc())
-        )
-        return list(self.db.scalars(statement))
