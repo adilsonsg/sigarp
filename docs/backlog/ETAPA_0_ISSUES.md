@@ -114,7 +114,7 @@ vulnerabilidades.
 
 - Labels sugeridos: `P1`, `api`, `architecture`
 - Dependências: P0-03
-- Estado: pendente
+- Estado: concluído tecnicamente na `0.9.0-alpha1`
 
 ### Critérios de aceite
 
@@ -123,6 +123,14 @@ vulnerabilidades.
 - erros seguem contrato único com `request_id`;
 - OpenAPI é verificado por teste de contrato;
 - mudanças incompatíveis possuem política de depreciação.
+
+### Entrega técnica
+
+- prefixo canônico `/api/v1`, mantendo rotas legadas temporariamente;
+- envelope paginado com total explícito nas coleções locais;
+- contrato único de erro com `request_id` e detalhes de validação;
+- testes automatizados do OpenAPI, paginação e compatibilidade;
+- política de evolução e depreciação em `docs/api-versioning.md`.
 
 ## P1-02 — Preparar adaptador SUAP desacoplado
 

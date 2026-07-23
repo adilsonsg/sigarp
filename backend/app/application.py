@@ -7,6 +7,7 @@ from app.api.routes.opportunities import router as opportunities_router
 from app.api.routes.organizations import router as organizations_router
 from app.api.routes.pncp import router as pncp_router
 from app.api.routes.system import router as system_router
+from app.api.v1.router import router as api_v1_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.middleware.request_context import RequestContextMiddleware
@@ -26,9 +27,10 @@ def create_app() -> FastAPI:
     register_exception_handlers(application)
 
     application.include_router(system_router)
-    application.include_router(auth_router)
-    application.include_router(organizations_router)
-    application.include_router(pncp_router)
-    application.include_router(opportunities_router)
+    application.include_router(auth_router, deprecated=True)
+    application.include_router(organizations_router, deprecated=True)
+    application.include_router(pncp_router, deprecated=True)
+    application.include_router(opportunities_router, deprecated=True)
+    application.include_router(api_v1_router)
 
     return application

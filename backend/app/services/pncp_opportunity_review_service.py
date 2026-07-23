@@ -27,9 +27,20 @@ class PNCPOpportunityReviewService:
         return PNCPOpportunityReviewResponse.model_validate(record)
 
     def list_by_assessment(
-        self, assessment_id: int
+        self,
+        assessment_id: int,
+        *,
+        skip: int = 0,
+        limit: int | None = None,
     ) -> list[PNCPOpportunityReviewResponse]:
         return [
             PNCPOpportunityReviewResponse.model_validate(record)
-            for record in self.repository.list_by_assessment(assessment_id)
+            for record in self.repository.list_by_assessment(
+                assessment_id,
+                skip=skip,
+                limit=limit,
+            )
         ]
+
+    def count_by_assessment(self, assessment_id: int) -> int:
+        return self.repository.count_by_assessment(assessment_id)

@@ -24,6 +24,9 @@ class OrganizationService:
     def list(self, skip: int = 0, limit: int = 50) -> list[Organization]:
         return self.repository.list(skip=skip, limit=limit)
 
+    def count(self) -> int:
+        return self.repository.count()
+
     def get_by_id(self, organization_id: int) -> Organization:
         organization = self.repository.get_by_id(organization_id)
         if organization is None:

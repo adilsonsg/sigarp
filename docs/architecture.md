@@ -13,7 +13,7 @@ flowchart TD
     EXT --> CLS["Classificação de oportunidade"]
     CLS --> PRF["Perfil técnico versionado"]
     PRF --> AUD["Execução e snapshot histórico"]
-    AUD --> API["API FastAPI"]
+    AUD --> API["API FastAPI /api/v1"]
     ID["Identidade configurada"] --> AUTH["Autenticação e papéis"]
     AUTH --> API
     API --> REV["Revisão humana auditável"]
@@ -41,6 +41,7 @@ repositórios isolam a persistência; modelos SQLAlchemy representam o PostgreSQ
 ## Princípios
 
 - API-first.
+- Contratos públicos versionados e compatibilidade explícita.
 - Dados oficiais preservados.
 - Separação entre dado bruto e normalizado.
 - Neutralidade na comparação.
@@ -58,6 +59,12 @@ repositórios isolam a persistência; modelos SQLAlchemy representam o PostgreSQ
 
 `create_app()` monta a aplicação, registra rotas, middleware e handlers.
 Isso permite testar e evoluir a inicialização sem concentrar tudo em `main.py`.
+
+A API canônica usa `/api/v1`. Coleções locais compartilham o envelope
+`items`, `page`, `page_size`, `total` e `total_pages`; erros compartilham
+`detail`, `code`, `request_id` e `errors`. Rotas anteriores sem versão seguem
+ativas apenas como camada de compatibilidade e são marcadas como depreciadas no
+OpenAPI.
 
 ## Limites dos módulos
 
@@ -85,4 +92,5 @@ o ADR-007 estabelece autenticação, papéis e revisão humana auditável.
 
 Os controles operacionais da cadeia de suprimentos estão em
 `docs/supply-chain.md`; o inventário e as decisões institucionais pendentes estão
-em `docs/compliance/`.
+em `docs/compliance/`. A política de contrato e depreciação está em
+`docs/api-versioning.md`.

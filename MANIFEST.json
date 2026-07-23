@@ -1,9 +1,9 @@
 {
   "project": "SIGARP",
-  "version": "0.8.0-alpha1",
-  "stage": "Etapa 3 - seguranca da entrega e conformidade",
-  "file_count": 193,
-  "test_count": 72,
+  "version": "0.9.0-alpha1",
+  "stage": "P1-01 - contratos estaveis e paginacao da API",
+  "file_count": 206,
+  "test_count": 78,
   "migration_head": "20260722_0010",
   "python_compile_validation": true,
   "postgresql_validation": true,
