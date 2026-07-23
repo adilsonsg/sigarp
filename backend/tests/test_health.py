@@ -1,5 +1,7 @@
 from fastapi.testclient import TestClient
 
+from app.core.config import settings
+
 
 def test_health(client: TestClient) -> None:
     response = client.get("/health")
@@ -8,7 +10,7 @@ def test_health(client: TestClient) -> None:
     assert response.json() == {
         "application": "SIGARP",
         "version": "0.8.0-alpha1",
-        "environment": "development",
+        "environment": settings.app_env,
         "status": "online",
     }
 
