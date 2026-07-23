@@ -17,6 +17,8 @@ flowchart TD
     ID["Identidade configurada"] --> AUTH["Autenticação e papéis"]
     AUTH --> API
     API --> REV["Revisão humana auditável"]
+    CI["CI: testes, segredos e dependências"] --> REL["Release: pacote, SBOM e SHA-256"]
+    REL --> API
 ```
 
 A API valida contratos e traduz erros; serviços orquestram casos de uso;
@@ -48,6 +50,9 @@ repositórios isolam a persistência; modelos SQLAlchemy representam o PostgreSQ
 - Autenticação fail-closed e privilégio mínimo.
 - Migrations obrigatórias.
 - Configuração por variáveis de ambiente.
+- Privilégio mínimo no CI e artefatos produzidos a partir de tags.
+- Conformidade depende de decisões institucionais explícitas, não de suposições
+  do software.
 
 ## Inicialização
 
@@ -67,9 +72,17 @@ Isso permite testar e evoluir a inicialização sem concentrar tudo em `main.py`
 - revisões humanas são eventos imutáveis separados da classificação automática;
 - uma futura integração SUAP deve usar adaptador próprio, idempotência e fila
   persistente, sem acoplamento ao domínio de busca.
+- workflows de CI não recebem segredos de aplicação e usam permissões mínimas;
+- releases são reconstruídas da árvore da tag e acompanhadas por SBOM e SHA-256;
+- base legal, retenção, licença e aprovação de produção ficam fora do domínio e
+  exigem registro institucional.
 
 ## Decisões
 
 As decisões arquiteturais estão em `docs/adr`. O ADR-005 torna obrigatórios os
 perfis neutros e versionados; o ADR-006 define a trilha de execução e histórico;
 o ADR-007 estabelece autenticação, papéis e revisão humana auditável.
+
+Os controles operacionais da cadeia de suprimentos estão em
+`docs/supply-chain.md`; o inventário e as decisões institucionais pendentes estão
+em `docs/compliance/`.

@@ -28,7 +28,7 @@ services:
     restart: unless-stopped
     environment:
       APP_NAME: SIGARP
-      APP_VERSION: 0.7.0-alpha1
+      APP_VERSION: 0.8.0-alpha1
       APP_ENV: development
       LOG_LEVEL: INFO
       DATABASE_URL: "postgresql+psycopg2://${POSTGRES_USER:-sigarp}:${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}@postgres:5432/${POSTGRES_DB:-sigarp}"
@@ -36,7 +36,7 @@ services:
       PNCP_TIMEOUT_SECONDS: 30
       PNCP_MAX_RETRIES: 7
       PNCP_BACKOFF_SECONDS: 5
-      PNCP_USER_AGENT: SIGARP/0.7.0-alpha1 (IFMT)
+      PNCP_USER_AGENT: SIGARP/0.8.0-alpha1 (IFMT)
       PNCP_DOCUMENT_MAX_BYTES: 50000000
       PNCP_DOCUMENT_MAX_TEXT_CHARS: 2000000
       PNCP_DOCUMENT_MAX_PAGES: 1000

@@ -7,7 +7,7 @@ implantação institucional; P1 deve entrar no ciclo imediatamente seguinte.
 
 - Labels sugeridos: `P0`, `release`, `devops`
 - Dependências: nenhuma
-- Estado: implementado localmente; aguarda revisão e publicação
+- Estado: concluído e publicado como `v0.5.0-alpha6`
 
 ### Objetivo
 
@@ -85,7 +85,8 @@ administração, revisão humana ou integração SUAP.
 
 - Labels sugeridos: `P0`, `security`, `legal`
 - Dependências: P0-01
-- Estado: pendente
+- Estado: controles técnicos concluídos na `0.8.0-alpha1`; decisões
+  institucionais de licença, base legal, agentes e retenção permanecem pendentes
 
 ### Objetivo
 
@@ -99,6 +100,15 @@ vulnerabilidades.
 - CI executa varredura de segredos e dependências;
 - SBOM e checksums acompanham cada release;
 - política de reporte e correção de vulnerabilidades é publicada.
+
+### Entrega técnica
+
+- CI com Gitleaks, `pip-audit` e Dependency Review;
+- Dependabot semanal para Python e GitHub Actions;
+- workflow de release com pacote da tag, SBOM SPDX JSON e SHA-256;
+- `SECURITY.md`, inventário preliminar e registro de decisões pendentes;
+- bloqueios institucionais mantidos explícitos, sem escolha automática de licença
+  ou hipótese legal.
 
 ## P1-01 — Contratos estáveis e paginação da API
 

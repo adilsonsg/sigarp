@@ -1,11 +1,14 @@
 {
   "project": "SIGARP",
-  "version": "0.7.0-alpha1",
-  "stage": "Etapa 2 - identidade, autorizacao e revisao humana",
-  "file_count": 184,
+  "version": "0.8.0-alpha1",
+  "stage": "Etapa 3 - seguranca da entrega e conformidade",
+  "file_count": 193,
   "test_count": 72,
   "migration_head": "20260722_0010",
   "python_compile_validation": true,
   "postgresql_validation": true,
-  "quality_checks": ["ruff", "black", "isort", "pytest"]
+  "quality_checks": ["ruff", "black", "isort", "pytest"],
+  "security_checks": ["gitleaks", "pip-audit", "dependency-review"],
+  "release_artifacts": ["source-zip", "spdx-json", "sha256sums"],
+  "institutional_approval_required": true
 }
