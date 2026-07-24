@@ -1,4 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.api.error_handlers import register_exception_handlers
 from app.api.responses import UTF8JSONResponse
@@ -11,6 +15,8 @@ from app.api.v1.router import router as api_v1_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.middleware.request_context import RequestContextMiddleware
+
+WEB_DIR = Path(__file__).resolve().parent / "web"
 
 
 def create_app() -> FastAPI:
@@ -32,5 +38,19 @@ def create_app() -> FastAPI:
     application.include_router(pncp_router, deprecated=True)
     application.include_router(opportunities_router, deprecated=True)
     application.include_router(api_v1_router)
+
+    @application.get("/", include_in_schema=False)
+    def root() -> RedirectResponse:
+        return RedirectResponse(url="/consulta")
+
+    @application.get("/consulta", include_in_schema=False)
+    def consultation_page() -> FileResponse:
+        return FileResponse(WEB_DIR / "index.html")
+
+    application.mount(
+        "/consulta/assets",
+        StaticFiles(directory=WEB_DIR),
+        name="consultation-assets",
+    )
 
     return application

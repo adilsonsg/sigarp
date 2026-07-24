@@ -1,5 +1,23 @@
 # SIGARP
 
+## Consulta local
+
+Na v0.10.0-alpha1, inicie o ambiente no Windows com:
+
+```powershell
+.\INICIAR_SIGARP.ps1
+```
+
+A interface será aberta em `http://127.0.0.1:8000/consulta`. Ela oferece
+filtros, detalhes e exportação CSV sem remover a autenticação da API. Para
+atualizar os dados do PNCP dos últimos 30 dias:
+
+```powershell
+.\ATUALIZAR_PNCP.ps1
+```
+
+Consulte `INSTALAR_V0.10.0_ALPHA1.md` para opções de período, UF e modalidade.
+
 Sistema Inteligente de Gestão e Análise de Registro de Preços.
 
 ## Versão
