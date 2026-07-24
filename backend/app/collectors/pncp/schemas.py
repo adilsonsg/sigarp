@@ -82,6 +82,51 @@ class PNCPPage(PNCPModel):
     empty: bool = False
 
 
+class PNCPPriceRegistry(PNCPModel):
+    numero_controle_pncp_ata: str | None = Field(
+        default=None, alias="numeroControlePNCPAta"
+    )
+    numero_controle_pncp_compra: str | None = Field(
+        default=None, alias="numeroControlePNCPCompra"
+    )
+    numero_ata: str | None = Field(default=None, alias="numeroAtaRegistroPreco")
+    ano_ata: int | None = Field(default=None, alias="anoAta")
+    data_assinatura: date | None = Field(default=None, alias="dataAssinatura")
+    vigencia_inicio: date | None = Field(default=None, alias="vigenciaInicio")
+    vigencia_fim: date | None = Field(default=None, alias="vigenciaFim")
+    data_cancelamento: date | None = Field(default=None, alias="dataCancelamento")
+    cancelado: bool = False
+    data_publicacao_pncp: datetime | None = Field(
+        default=None, alias="dataPublicacaoPncp"
+    )
+    data_atualizacao: datetime | None = Field(default=None, alias="dataAtualizacao")
+    objeto: str | None = Field(default=None, alias="objetoContratacao")
+    cnpj_orgao: str | None = Field(default=None, alias="cnpjOrgao")
+    nome_orgao: str | None = Field(default=None, alias="nomeOrgao")
+    possibilidade_adesao: bool | None = Field(default=None, alias="possibilidadeAdesao")
+
+    @field_validator(
+        "data_assinatura",
+        "vigencia_inicio",
+        "vigencia_fim",
+        "data_cancelamento",
+        "data_publicacao_pncp",
+        "data_atualizacao",
+        mode="before",
+    )
+    @classmethod
+    def empty_price_registry_date_as_none(cls, value: Any) -> Any:
+        return None if value == "" else value
+
+
+class PNCPPriceRegistryPage(PNCPModel):
+    data: list[PNCPPriceRegistry] = Field(default_factory=list)
+    total_registros: int = Field(default=0, alias="totalRegistros")
+    total_paginas: int = Field(default=0, alias="totalPaginas")
+    numero_pagina: int = Field(default=1, alias="numeroPagina")
+    paginas_restantes: int = Field(default=0, alias="paginasRestantes")
+
+
 class PNCPSearchRequest(BaseModel):
     palavra_chave: str | None = Field(default=None, min_length=2, max_length=200)
     data_inicial: date

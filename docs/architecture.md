@@ -38,6 +38,17 @@ continua responsável por autenticação, autorização, paginação e auditoria
 Esse desenho reduz a operação local a PostgreSQL + backend e preserva a
 possibilidade de substituir a interface por um cliente institucional no futuro.
 
+## Atas por vigência
+
+A coleta de atas usa `GET /v1/atas` da API oficial de Consulta do PNCP, com
+`dataInicial` e `dataFinal` representando o período de vigência consultado.
+Cada registro preserva o payload de origem, datas inicial/final, cancelamento,
+órgão gerenciador e situação calculada na data da coleta.
+
+O ano da ata não determina sua validade. A busca local considera a interseção
+entre a data informada e o intervalo de vigência, além de excluir registros
+cancelados ou expirados. O endpoint interno é `/api/v1/atas`.
+
 ## Diretórios
 
 - `app/api`: rotas, dependências e handlers.

@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.11.0-alpha1
+
+- coleta atas diretamente do endpoint oficial do PNCP por período de vigência;
+- preserva atas de 2025 que continuam vigentes em 2026;
+- permite restringir a coleta e a busca por esfera administrativa;
+- adiciona endpoint paginado `/api/v1/atas`;
+- adiciona busca textual, vigência, esfera e UF na interface local;
+- adiciona exportação CSV específica para atas;
+- adiciona `ATUALIZAR_ATAS.ps1`;
+- mantém a migration head `20260722_0010`.
+
 ## 0.10.0-alpha1
 
 - adiciona interface web local em `/consulta`;

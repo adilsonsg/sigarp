@@ -9,7 +9,7 @@ def test_health(client: TestClient) -> None:
     assert response.status_code == 200
     assert response.json() == {
         "application": "SIGARP",
-        "version": "0.10.0-alpha1",
+        "version": "0.11.0-alpha1",
         "environment": settings.app_env,
         "status": "online",
     }

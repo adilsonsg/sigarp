@@ -16,7 +16,19 @@ atualizar os dados do PNCP dos últimos 30 dias:
 .\ATUALIZAR_PNCP.ps1
 ```
 
-Consulte `INSTALAR_V0.10.0_ALPHA1.md` para opções de período, UF e modalidade.
+Consulte `INSTALAR_V0.11.0_ALPHA1.md` para instalação e coleta de atas.
+
+### Atas vigentes
+
+Na v0.11.0-alpha1, a opção **Atas vigentes** consulta registros coletados pelo
+período real de vigência. Isso inclui atas de 2025 que ainda sejam válidas em
+2026. Para atualizar as atas federais vigentes hoje:
+
+```powershell
+.\ATUALIZAR_ATAS.ps1
+```
+
+A data de publicação não é usada isoladamente como evidência de vigência.
 
 Sistema Inteligente de Gestão e Análise de Registro de Preços.
 

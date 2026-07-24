@@ -226,13 +226,18 @@ button:disabled {
 
 .filter-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1.3fr 0.55fr 0.8fr 0.75fr auto;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
   align-items: end;
   gap: 12px;
 }
 
 .search-button {
   white-space: nowrap;
+}
+
+.view-control select {
+  border-color: var(--brand);
+  font-weight: 750;
 }
 
 .status {

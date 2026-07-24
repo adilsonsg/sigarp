@@ -51,7 +51,18 @@
             <button id="clear-filters" class="secondary" type="button">Limpar</button>
           </div>
           <div class="filter-grid">
-            <label>
+            <label class="view-control">
+              Consulta
+              <select id="consultation-view" name="consulta">
+                <option value="opportunities">Oportunidades</option>
+                <option value="registries">Atas vigentes</option>
+              </select>
+            </label>
+            <label data-scope="registries" class="hidden">
+              Palavra-chave
+              <input name="termo" minlength="2" placeholder="Ex.: projetor">
+            </label>
+            <label data-scope="opportunities">
               Classificação
               <select name="classificacao">
                 <option value="">Todas</option>
@@ -62,7 +73,7 @@
                 <option value="SEM_CORRESPONDENCIA">Sem correspondência</option>
               </select>
             </label>
-            <label>
+            <label data-scope="opportunities">
               Adequação técnica
               <select name="adequacao">
                 <option value="">Todas</option>
@@ -76,9 +87,22 @@
               UF
               <input name="uf" maxlength="2" placeholder="Ex.: MT">
             </label>
-            <label>
+            <label data-scope="opportunities">
               Versão do perfil
               <input name="perfil_versao" placeholder="Ex.: 1.0.0">
+            </label>
+            <label data-scope="registries" class="hidden">
+              Vigente em
+              <input name="vigente_em" type="date">
+            </label>
+            <label data-scope="registries" class="hidden">
+              Esfera
+              <select name="esfera">
+                <option value="federal" selected>Federal</option>
+                <option value="estadual">Estadual</option>
+                <option value="municipal">Municipal</option>
+                <option value="distrital">Distrital</option>
+              </select>
             </label>
             <label>
               Resultados por página
