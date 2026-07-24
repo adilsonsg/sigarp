@@ -71,13 +71,18 @@ class PriceRegistryRepository:
 
         if term:
             pattern = f"%{term.strip()}%"
-            statement = statement.outerjoin(PriceRegistryRecord.itens).where(
+            item_matches = PriceRegistryRecord.itens.any(
                 or_(
-                    PriceRegistryRecord.objeto.ilike(pattern),
                     PriceRegistryItem.descricao.ilike(pattern),
                     PriceRegistryItem.fabricante.ilike(pattern),
                     PriceRegistryItem.marca.ilike(pattern),
                     PriceRegistryItem.modelo.ilike(pattern),
+                )
+            )
+            statement = statement.where(
+                or_(
+                    PriceRegistryRecord.objeto.ilike(pattern),
+                    item_matches,
                 )
             )
 
@@ -99,8 +104,7 @@ class PriceRegistryRepository:
                 statement = statement.where(func.upper(Organization.uf) == uf.upper())
 
         statement = (
-            statement.distinct()
-            .order_by(PriceRegistryRecord.vigencia_fim.desc())
+            statement.order_by(PriceRegistryRecord.vigencia_fim.desc())
             .offset(skip)
             .limit(limit)
         )
