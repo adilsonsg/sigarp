@@ -226,13 +226,18 @@ button:disabled {
 
 .filter-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1.3fr 0.55fr 0.8fr 0.75fr auto;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
   align-items: end;
   gap: 12px;
 }
 
 .search-button {
   white-space: nowrap;
+}
+
+.view-control select {
+  border-color: var(--brand);
+  font-weight: 750;
 }
 
 .status {
@@ -272,6 +277,35 @@ button:disabled {
 .card-footer {
   justify-content: space-between;
   margin-top: 14px;
+}
+
+.registry-items {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.registry-item-summary,
+.registry-item-detail {
+  border-left: 3px solid var(--green);
+  padding: 0.65rem 0.8rem;
+  background: var(--brand-soft);
+  border-radius: 0 0.45rem 0.45rem 0;
+}
+
+.registry-item-summary span {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.registry-item-summary span:last-child,
+.item-warning {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.registry-item-detail + .registry-item-detail {
+  margin-top: 1rem;
 }
 
 .meta-row {

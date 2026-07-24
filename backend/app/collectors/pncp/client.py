@@ -6,7 +6,7 @@ import httpx
 
 from app.clients.base import BaseHttpClient, SleepCallable
 from app.collectors.pncp.config import PNCPConfig
-from app.collectors.pncp.endpoints import CONTRACTING_BY_PUBLICATION
+from app.collectors.pncp.endpoints import ATAS_BY_VALIDITY, CONTRACTING_BY_PUBLICATION
 
 
 class PNCPClient(BaseHttpClient):
@@ -62,6 +62,42 @@ class PNCPClient(BaseHttpClient):
             params["uf"] = uf.strip().upper()
 
         return await self.get(CONTRACTING_BY_PUBLICATION, params=params)
+
+    async def buscar_atas_por_vigencia(
+        self,
+        *,
+        data_inicial: date,
+        data_final: date,
+        pagina: int = 1,
+        cnpj_orgao: str | None = None,
+    ) -> Any:
+        """Fetch price registration records whose validity overlaps the period."""
+        params: dict[str, str | int] = {
+            "dataInicial": data_inicial.strftime("%Y%m%d"),
+            "dataFinal": data_final.strftime("%Y%m%d"),
+            "pagina": pagina,
+        }
+        if cnpj_orgao:
+            params["cnpjOrgao"] = "".join(
+                character for character in cnpj_orgao if character.isdigit()
+            )
+        return await self.get(ATAS_BY_VALIDITY, params=params)
+
+    async def buscar_orgao(self, cnpj: str) -> Any:
+        """Fetch organization metadata from the official Integration API."""
+        normalized = "".join(character for character in cnpj if character.isdigit())
+        endpoint = f"https://pncp.gov.br/api/pncp/v1/orgaos/{normalized}"
+        return await self.get(endpoint)
+
+    async def buscar_itens_ata(self, numero_controle_pncp_ata: str) -> Any:
+        """Fetch federal price registry items from Compras.gov.br Open Data."""
+        endpoint = (
+            "https://dadosabertos.compras.gov.br/" "modulo-arp/2.1_consultarARPItem_Id"
+        )
+        return await self.get(
+            endpoint,
+            params={"numeroControlePncpAta": numero_controle_pncp_ata},
+        )
 
     async def buscar_itens_contratacao(
         self,
