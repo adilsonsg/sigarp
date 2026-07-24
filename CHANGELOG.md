@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.0-alpha1
+
+- adiciona interface web local em `/consulta`;
+- permite filtros, paginação, detalhes e exportação CSV;
+- preserva autenticação Bearer e guarda o token somente na aba;
+- adiciona scripts PowerShell para iniciar o sistema e atualizar o PNCP;
+- mantém a migration head `20260722_0010`.
+
 Todas as mudanças relevantes do SIGARP serão registradas neste arquivo.
 
 ## [0.9.0-alpha1] - 2026-07-23

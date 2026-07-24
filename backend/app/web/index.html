@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'none'; form-action 'self'"
+    >
+    <title>SIGARP — Consulta de oportunidades</title>
+    <link rel="stylesheet" href="/consulta/assets/styles.css">
+    <script src="/consulta/assets/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Consulta local</p>
+        <h1>SIGARP</h1>
+        <p class="subtitle">Oportunidades públicas encontradas no PNCP</p>
+      </div>
+      <div class="identity">
+        <span id="connection-dot" class="connection-dot"></span>
+        <span id="identity-label">Não conectado</span>
+        <button id="change-token" class="link-button" type="button">Acesso</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="access-panel" class="panel access-panel">
+        <div>
+          <h2>Acessar consultas</h2>
+          <p>Informe seu token local. Ele permanece apenas nesta aba do navegador.</p>
+        </div>
+        <form id="access-form" class="access-form">
+          <label for="token">Token Bearer</label>
+          <div class="inline-control">
+            <input id="token" name="token" type="password" autocomplete="off" required>
+            <button class="primary" type="submit">Entrar</button>
+          </div>
+          <p id="access-error" class="error" role="alert"></p>
+        </form>
+      </section>
+
+      <section id="workspace" class="workspace hidden">
+        <form id="filters" class="panel filters">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Filtros</p>
+              <h2>Oportunidades</h2>
+            </div>
+            <button id="clear-filters" class="secondary" type="button">Limpar</button>
+          </div>
+          <div class="filter-grid">
+            <label>
+              Classificação
+              <select name="classificacao">
+                <option value="">Todas</option>
+                <option value="CONFIRMADA_ITEM">Confirmada por item</option>
+                <option value="CONFIRMADA_DOCUMENTO">Confirmada por documento</option>
+                <option value="CANDIDATA_DOCUMENTO">Candidata por documento</option>
+                <option value="DESCARTADA_FALSO_POSITIVO">Falso positivo</option>
+                <option value="SEM_CORRESPONDENCIA">Sem correspondência</option>
+              </select>
+            </label>
+            <label>
+              Adequação técnica
+              <select name="adequacao">
+                <option value="">Todas</option>
+                <option value="ADEQUADA">Adequada</option>
+                <option value="PARCIALMENTE_ADEQUADA">Parcialmente adequada</option>
+                <option value="INCOMPATIVEL">Incompatível</option>
+                <option value="EXIGE_ANALISE_HUMANA">Exige análise humana</option>
+              </select>
+            </label>
+            <label>
+              UF
+              <input name="uf" maxlength="2" placeholder="Ex.: MT">
+            </label>
+            <label>
+              Versão do perfil
+              <input name="perfil_versao" placeholder="Ex.: 1.0.0">
+            </label>
+            <label>
+              Resultados por página
+              <select name="page_size">
+                <option value="20">20</option>
+                <option value="50" selected>50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+              </select>
+            </label>
+            <button class="primary search-button" type="submit">Consultar</button>
+          </div>
+        </form>
+
+        <section class="panel results">
+          <div class="section-heading">
+            <div>
+              <p id="result-summary" class="eyebrow">Aguardando consulta</p>
+              <h2>Resultados</h2>
+            </div>
+            <button id="export-csv" class="secondary" type="button" disabled>
+              Exportar CSV
+            </button>
+          </div>
+          <div id="status" class="status" role="status"></div>
+          <div id="cards" class="cards"></div>
+          <nav class="pagination" aria-label="Paginação">
+            <button id="previous-page" class="secondary" type="button">Anterior</button>
+            <span id="page-label"></span>
+            <button id="next-page" class="secondary" type="button">Próxima</button>
+          </nav>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="details-dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Detalhes</p>
+          <h2 id="details-title">Oportunidade</h2>
+        </div>
+        <button id="close-details" class="icon-button" type="button" aria-label="Fechar">×</button>
+      </div>
+      <div id="details-content"></div>
+    </dialog>
+  </body>
+</html>

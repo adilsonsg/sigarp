@@ -24,6 +24,20 @@ flowchart TD
 A API valida contratos e traduz erros; serviços orquestram casos de uso;
 repositórios isolam a persistência; modelos SQLAlchemy representam o PostgreSQL.
 
+## Interface local de consulta
+
+A v0.10.0-alpha1 acrescenta uma camada web estática, servida pelo próprio
+FastAPI em `/consulta`. Ela não introduz serviço frontend, build JavaScript,
+sessão de servidor ou banco adicional. O navegador consome exclusivamente os
+contratos versionados de `/api/v1`.
+
+O token Bearer informado pelo operador permanece em `sessionStorage`, limitado
+à aba atual, e nunca é incorporado ao código ou persistido pelo backend. A API
+continua responsável por autenticação, autorização, paginação e auditoria.
+
+Esse desenho reduz a operação local a PostgreSQL + backend e preserva a
+possibilidade de substituir a interface por um cliente institucional no futuro.
+
 ## Diretórios
 
 - `app/api`: rotas, dependências e handlers.
