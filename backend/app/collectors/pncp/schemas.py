@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -125,6 +126,35 @@ class PNCPPriceRegistryPage(PNCPModel):
     total_paginas: int = Field(default=0, alias="totalPaginas")
     numero_pagina: int = Field(default=1, alias="numeroPagina")
     paginas_restantes: int = Field(default=0, alias="paginasRestantes")
+
+
+class ComprasGovPriceRegistryItem(PNCPModel):
+    numero_controle_pncp_ata: str | None = Field(
+        default=None, alias="numeroControlePncpAta"
+    )
+    numero_item: str | None = Field(default=None, alias="numeroItem")
+    descricao: str | None = Field(default=None, alias="descricaoItem")
+    tipo_item: str | None = Field(default=None, alias="tipoItem")
+    quantidade_homologada_item: Decimal | None = Field(
+        default=None, alias="quantidadeHomologadaItem"
+    )
+    quantidade_homologada_vencedor: Decimal | None = Field(
+        default=None, alias="quantidadeHomologadaVencedor"
+    )
+    quantidade_empenhada: Decimal | None = Field(
+        default=None, alias="quantidadeEmpenhada"
+    )
+    limite_adesao: Decimal | None = Field(default=None, alias="maximoAdesao")
+    valor_unitario: Decimal | None = Field(default=None, alias="valorUnitario")
+    fornecedor_cnpj: str | None = Field(default=None, alias="niFornecedor")
+    fornecedor_nome: str | None = Field(default=None, alias="nomeRazaoSocialFornecedor")
+    classificacao_fornecedor: str | None = Field(
+        default=None, alias="classificacaoFornecedor"
+    )
+    item_excluido: bool = Field(default=False, alias="itemExcluido")
+    codigo_item: int | None = Field(default=None, alias="codigoItem")
+    codigo_pdm: int | None = Field(default=None, alias="codigoPdm")
+    nome_pdm: str | None = Field(default=None, alias="nomePdm")
 
 
 class PNCPSearchRequest(BaseModel):

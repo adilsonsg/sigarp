@@ -1,12 +1,17 @@
 from datetime import date
+from decimal import Decimal
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.organization import Organization
 from app.models.price_registry import PriceRegistryItem, PriceRegistryRecord
 from app.models.supplier import Supplier
-from app.schemas.price_registry import PriceRegistryRecordInput, SupplierInput
+from app.schemas.price_registry import (
+    PriceRegistryItemInput,
+    PriceRegistryRecordInput,
+    SupplierInput,
+)
 
 
 class PriceRegistryRepository:
@@ -54,6 +59,38 @@ class PriceRegistryRepository:
         self.db.commit()
         return self.get_by_control_number(payload.numero_controle_pncp)  # type: ignore[return-value]
 
+    def replace_items(
+        self,
+        record: PriceRegistryRecord,
+        items: list[PriceRegistryItemInput],
+    ) -> PriceRegistryRecord:
+        record.itens.clear()
+        self.db.flush()
+        for item_payload in items:
+            item_data = item_payload.model_dump(exclude={"fornecedor"})
+            supplier = self._get_or_create_supplier(item_payload.fornecedor)
+            record.itens.append(PriceRegistryItem(**item_data, fornecedor=supplier))
+        self.db.commit()
+        return self.get_by_control_number(record.numero_controle_pncp)  # type: ignore[return-value]
+
+    def list_for_item_sync(
+        self,
+        *,
+        only_without_items: bool = True,
+        limit: int | None = None,
+    ) -> list[PriceRegistryRecord]:
+        statement = (
+            select(PriceRegistryRecord)
+            .join(PriceRegistryRecord.orgao_gerenciador)
+            .where(func.lower(Organization.esfera) == "federal")
+            .order_by(PriceRegistryRecord.vigencia_fim.desc())
+        )
+        if only_without_items:
+            statement = statement.where(~PriceRegistryRecord.itens.any())
+        if limit is not None:
+            statement = statement.limit(limit)
+        return list(self.db.scalars(statement).all())
+
     def search(
         self,
         term: str | None = None,
@@ -62,29 +99,44 @@ class PriceRegistryRepository:
         sphere: str | None = None,
         uf: str | None = None,
         valid_on: date | None = None,
+        minimum_quantity: Decimal | None = None,
         skip: int = 0,
         limit: int = 50,
     ) -> list[PriceRegistryRecord]:
         statement = select(PriceRegistryRecord).options(
-            selectinload(PriceRegistryRecord.itens)
+            selectinload(PriceRegistryRecord.itens).selectinload(
+                PriceRegistryItem.fornecedor
+            )
         )
 
+        quantity_match = (
+            PriceRegistryItem.quantidade_registrada >= minimum_quantity
+            if minimum_quantity is not None
+            else None
+        )
         if term:
             pattern = f"%{term.strip()}%"
+            item_text_match = or_(
+                PriceRegistryItem.descricao.ilike(pattern),
+                PriceRegistryItem.fabricante.ilike(pattern),
+                PriceRegistryItem.marca.ilike(pattern),
+                PriceRegistryItem.modelo.ilike(pattern),
+            )
             item_matches = PriceRegistryRecord.itens.any(
-                or_(
-                    PriceRegistryItem.descricao.ilike(pattern),
-                    PriceRegistryItem.fabricante.ilike(pattern),
-                    PriceRegistryItem.marca.ilike(pattern),
-                    PriceRegistryItem.modelo.ilike(pattern),
-                )
+                and_(item_text_match, quantity_match)
+                if minimum_quantity is not None
+                else item_text_match
             )
-            statement = statement.where(
-                or_(
-                    PriceRegistryRecord.objeto.ilike(pattern),
-                    item_matches,
+            object_matches = PriceRegistryRecord.objeto.ilike(pattern)
+            if minimum_quantity is not None:
+                object_matches = and_(
+                    object_matches,
+                    PriceRegistryRecord.itens.any(quantity_match),
                 )
-            )
+            statement = statement.where(or_(object_matches, item_matches))
+        elif minimum_quantity is not None:
+            assert quantity_match is not None
+            statement = statement.where(PriceRegistryRecord.itens.any(quantity_match))
 
         if only_active or valid_on:
             reference_date = valid_on or date.today()
@@ -118,6 +170,7 @@ class PriceRegistryRepository:
         sphere: str | None = None,
         uf: str | None = None,
         valid_on: date | None = None,
+        minimum_quantity: Decimal | None = None,
     ) -> int:
         return len(
             self.search(
@@ -126,6 +179,7 @@ class PriceRegistryRepository:
                 sphere=sphere,
                 uf=uf,
                 valid_on=valid_on,
+                minimum_quantity=minimum_quantity,
                 limit=1_000_000,
             )
         )

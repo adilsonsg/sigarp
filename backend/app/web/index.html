@@ -62,6 +62,16 @@
               Palavra-chave
               <input name="termo" minlength="2" placeholder="Ex.: projetor">
             </label>
+            <label data-scope="registries" class="hidden">
+              Quantidade mínima desejada
+              <input
+                name="quantidade_minima"
+                type="number"
+                min="0.0001"
+                step="0.0001"
+                placeholder="Ex.: 20"
+              >
+            </label>
             <label data-scope="opportunities">
               Classificação
               <select name="classificacao">

@@ -16,7 +16,8 @@ atualizar os dados do PNCP dos últimos 30 dias:
 .\ATUALIZAR_PNCP.ps1
 ```
 
-Consulte `INSTALAR_V0.11.0_ALPHA1.md` para instalação e coleta de atas.
+Consulte `INSTALAR_V0.12.0_ALPHA1.md` para instalação, coleta de atas e
+enriquecimento dos itens.
 
 ### Atas vigentes
 
@@ -29,6 +30,16 @@ período real de vigência. Isso inclui atas de 2025 que ainda sejam válidas em
 ```
 
 A data de publicação não é usada isoladamente como evidência de vigência.
+
+### Itens e quantidade desejada
+
+Na v0.12.0-alpha1, `ATUALIZAR_ATAS.ps1` também consulta os itens federais no
+Compras.gov.br. A interface permite informar a quantidade mínima desejada e
+mostra quantidade registrada, empenhada, saldo estimado, limite de adesão,
+valor e fornecedor.
+
+O saldo é uma referência calculada com os dados oficiais disponíveis. A
+disponibilidade para adesão deve ser confirmada com o órgão gerenciador.
 
 Sistema Inteligente de Gestão e Análise de Registro de Preços.
 

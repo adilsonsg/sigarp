@@ -49,6 +49,19 @@ O ano da ata não determina sua validade. A busca local considera a interseção
 entre a data informada e o intervalo de vigência, além de excluir registros
 cancelados ou expirados. O endpoint interno é `/api/v1/atas`.
 
+## Itens e disponibilidade quantitativa
+
+Para atas federais, o enriquecimento usa o módulo ARP da API oficial de Dados
+Abertos do Compras.gov.br. Cada item preserva o payload de origem e normaliza
+quantidade homologada do vencedor, quantidade empenhada, saldo estimado,
+limite máximo de adesão, valor unitário e fornecedor.
+
+O filtro quantitativo usa a quantidade registrada como critério mínimo de
+candidatura. A resposta classifica como `ATENDE` apenas quando saldo estimado e
+limite de adesão também atendem ao solicitado. Ausência ou valor não positivo
+do limite resulta em `CONFIRMAR_COM_ORGAO`, evitando afirmar disponibilidade
+que a fonte não comprova.
+
 ## Diretórios
 
 - `app/api`: rotas, dependências e handlers.

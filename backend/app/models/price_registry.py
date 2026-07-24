@@ -85,8 +85,15 @@ class PriceRegistryItem(Base):
     modelo: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
     unidade_medida: Mapped[str | None] = mapped_column(String(50), nullable=True)
     quantidade_registrada: Mapped[Decimal | None] = mapped_column(
+        Numeric(18, 4), nullable=True, index=True
+    )
+    quantidade_empenhada: Mapped[Decimal | None] = mapped_column(
         Numeric(18, 4), nullable=True
     )
+    saldo_estimado: Mapped[Decimal | None] = mapped_column(
+        Numeric(18, 4), nullable=True, index=True
+    )
+    limite_adesao: Mapped[Decimal | None] = mapped_column(Numeric(18, 4), nullable=True)
     valor_unitario: Mapped[Decimal | None] = mapped_column(
         Numeric(18, 4), nullable=True
     )

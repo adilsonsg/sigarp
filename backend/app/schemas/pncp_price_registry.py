@@ -1,6 +1,7 @@
 from datetime import date
+from decimal import Decimal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class PNCPPriceRegistrySyncStats(BaseModel):
@@ -15,12 +16,38 @@ class PNCPPriceRegistrySyncStats(BaseModel):
     erros: int = 0
 
 
+class ComprasGovPriceRegistryItemSyncStats(BaseModel):
+    atas_processadas: int = 0
+    atas_com_itens: int = 0
+    atas_sem_itens: int = 0
+    itens_lidos: int = 0
+    itens_armazenados: int = 0
+    erros: int = 0
+
+
 class PNCPPriceRegistryOrganizationResponse(BaseModel):
     nome: str
     cnpj: str | None = None
     esfera: str
     uf: str | None = None
     municipio: str | None = None
+
+
+class PNCPPriceRegistryItemSupplierResponse(BaseModel):
+    cnpj: str | None = None
+    razao_social: str
+
+
+class PNCPPriceRegistryItemResponse(BaseModel):
+    numero_item: int
+    descricao: str
+    quantidade_registrada: Decimal | None = None
+    quantidade_empenhada: Decimal | None = None
+    saldo_estimado: Decimal | None = None
+    limite_adesao: Decimal | None = None
+    valor_unitario: Decimal | None = None
+    fornecedor: PNCPPriceRegistryItemSupplierResponse | None = None
+    disponibilidade: str
 
 
 class PNCPPriceRegistryResponse(BaseModel):
@@ -35,4 +62,5 @@ class PNCPPriceRegistryResponse(BaseModel):
     url_pncp: str | None = None
     orgao: PNCPPriceRegistryOrganizationResponse
     itens_quantidade: int = 0
+    itens: list[PNCPPriceRegistryItemResponse] = Field(default_factory=list)
     possibilidade_adesao: bool | None = None

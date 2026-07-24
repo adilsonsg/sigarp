@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.12.0-alpha1
+
+- coleta itens de atas federais na API oficial de Dados Abertos do
+  Compras.gov.br;
+- armazena quantidade registrada, empenhada, saldo estimado, limite de adesão,
+  valor unitário e fornecedor;
+- adiciona o filtro `quantidade_minima` ao endpoint `/api/v1/atas`;
+- classifica cada item como `ATENDE`, `NAO_ATENDE` ou
+  `CONFIRMAR_COM_ORGAO`;
+- apresenta quantidades e disponibilidade na interface e no CSV;
+- adiciona a migração Alembic `20260724_0011`;
+- amplia a suíte para 86 testes automatizados.
+
 ## 0.11.0-alpha1
 
 - coleta atas diretamente do endpoint oficial do PNCP por período de vigência;

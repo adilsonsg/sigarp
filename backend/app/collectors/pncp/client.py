@@ -89,6 +89,16 @@ class PNCPClient(BaseHttpClient):
         endpoint = f"https://pncp.gov.br/api/pncp/v1/orgaos/{normalized}"
         return await self.get(endpoint)
 
+    async def buscar_itens_ata(self, numero_controle_pncp_ata: str) -> Any:
+        """Fetch federal price registry items from Compras.gov.br Open Data."""
+        endpoint = (
+            "https://dadosabertos.compras.gov.br/" "modulo-arp/2.1_consultarARPItem_Id"
+        )
+        return await self.get(
+            endpoint,
+            params={"numeroControlePncpAta": numero_controle_pncp_ata},
+        )
+
     async def buscar_itens_contratacao(
         self,
         *,

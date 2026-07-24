@@ -34,6 +34,9 @@ class PriceRegistryItemInput(BaseModel):
     modelo: str | None = Field(default=None, max_length=255)
     unidade_medida: str | None = Field(default=None, max_length=50)
     quantidade_registrada: Decimal | None = Field(default=None, ge=0)
+    quantidade_empenhada: Decimal | None = Field(default=None, ge=0)
+    saldo_estimado: Decimal | None = Field(default=None, ge=0)
+    limite_adesao: Decimal | None = Field(default=None, ge=0)
     valor_unitario: Decimal | None = Field(default=None, ge=0)
     fornecedor: SupplierInput | None = None
     dados_fonte: dict[str, Any] | None = None
@@ -72,6 +75,9 @@ class PriceRegistryItemRead(BaseModel):
     modelo: str | None
     unidade_medida: str | None
     quantidade_registrada: Decimal | None
+    quantidade_empenhada: Decimal | None
+    saldo_estimado: Decimal | None
+    limite_adesao: Decimal | None
     valor_unitario: Decimal | None
 
 

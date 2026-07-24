@@ -56,6 +56,21 @@ function formatDate(value) {
   );
 }
 
+function formatNumber(value) {
+  if (value === null || value === undefined) return "Não informada";
+  return new Intl.NumberFormat("pt-BR", {
+    maximumFractionDigits: 4,
+  }).format(Number(value));
+}
+
+function formatCurrency(value) {
+  if (value === null || value === undefined) return "Não informado";
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(Number(value));
+}
+
 function safeExternalUrl(value) {
   try {
     const url = new URL(value);
@@ -164,6 +179,25 @@ function cardTemplate(item) {
 }
 
 function registryCardTemplate(item) {
+  const itemSummary = item.itens?.length
+    ? item.itens
+        .slice(0, 3)
+        .map(
+          (entry) => `
+            <div class="registry-item-summary">
+              <strong>Item ${escapeHtml(entry.numero_item)} · ${escapeHtml(displayLabel(entry.disponibilidade))}</strong>
+              <span>${escapeHtml(entry.descricao)}</span>
+              <span>
+                Registrada: ${escapeHtml(formatNumber(entry.quantidade_registrada))}
+                · Empenhada: ${escapeHtml(formatNumber(entry.quantidade_empenhada))}
+                · Saldo estimado: ${escapeHtml(formatNumber(entry.saldo_estimado))}
+                · Limite de adesão: ${escapeHtml(formatNumber(entry.limite_adesao))}
+              </span>
+            </div>
+          `,
+        )
+        .join("")
+    : '<p class="item-warning">Itens ainda não enriquecidos ou sem correspondência para os filtros.</p>';
   return `
     <article class="opportunity-card">
       <div class="card-top">
@@ -184,6 +218,7 @@ function registryCardTemplate(item) {
         <span>CNPJ: ${escapeHtml(item.orgao.cnpj || "não informado")}</span>
         <span>${escapeHtml(item.itens_quantidade)} item(ns) armazenado(s)</span>
       </div>
+      <div class="registry-items">${itemSummary}</div>
       <div class="card-footer">
         <span>${escapeHtml(item.numero_controle_pncp)}</span>
         <button class="details-button" type="button" data-registry-id="${item.id}">Ver detalhes</button>
@@ -296,6 +331,31 @@ function openRegistryDetails(item) {
       <h3>Identificação PNCP</h3>
       <p>${escapeHtml(item.numero_controle_pncp)}</p>
     </section>
+    <section class="detail-section">
+      <h3>Itens encontrados</h3>
+      ${
+        item.itens?.length
+          ? item.itens
+              .map(
+                (entry) => `
+                  <div class="registry-item-detail">
+                    <strong>Item ${escapeHtml(entry.numero_item)} · ${escapeHtml(displayLabel(entry.disponibilidade))}</strong>
+                    <p>${escapeHtml(entry.descricao)}</p>
+                    <div class="detail-grid">
+                      <div class="detail-block"><small>Registrada</small>${escapeHtml(formatNumber(entry.quantidade_registrada))}</div>
+                      <div class="detail-block"><small>Empenhada</small>${escapeHtml(formatNumber(entry.quantidade_empenhada))}</div>
+                      <div class="detail-block"><small>Saldo estimado</small>${escapeHtml(formatNumber(entry.saldo_estimado))}</div>
+                      <div class="detail-block"><small>Limite de adesão</small>${escapeHtml(formatNumber(entry.limite_adesao))}</div>
+                      <div class="detail-block"><small>Valor unitário</small>${escapeHtml(formatCurrency(entry.valor_unitario))}</div>
+                      <div class="detail-block"><small>Fornecedor</small>${escapeHtml(entry.fornecedor?.razao_social || "Não informado")}</div>
+                    </div>
+                  </div>
+                `,
+              )
+              .join("")
+          : "<p>Nenhum item armazenado corresponde aos filtros atuais.</p>"
+      }
+    </section>
   `;
   elements.dialog.showModal();
 }
@@ -344,6 +404,14 @@ async function exportAll() {
       ["orgao.cnpj", "CNPJ"],
       ["orgao.esfera", "Esfera"],
       ["orgao.uf", "UF"],
+      ["itens.0.numero_item", "Primeiro item"],
+      ["itens.0.descricao", "Descrição do primeiro item"],
+      ["itens.0.quantidade_registrada", "Quantidade registrada"],
+      ["itens.0.quantidade_empenhada", "Quantidade empenhada"],
+      ["itens.0.saldo_estimado", "Saldo estimado"],
+      ["itens.0.limite_adesao", "Limite de adesão"],
+      ["itens.0.valor_unitario", "Valor unitário"],
+      ["itens.0.disponibilidade", "Disponibilidade"],
     ];
     const columns =
       state.view === "registries" ? registryColumns : opportunityColumns;
